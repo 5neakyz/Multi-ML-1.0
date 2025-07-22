@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
-from tkinter import scrolledtext
+import customtkinter as ctk
 
 import serial.tools.list_ports
 import time
@@ -22,7 +22,7 @@ from help_menu import HelpMenu
 
 logger = logging.getLogger(__name__)
 
-class TungstenGui(tk.Tk):
+class TungstenGui(ctk.CTk):
     def __init__(self):
         super().__init__()
         # configure window
@@ -34,38 +34,38 @@ class TungstenGui(tk.Tk):
 
         #style
         self.option_add("*tearOff", False) # This is always a good idea
-        icon_path = self.resource_path("assests/seedouble.ico")
+        icon_path = self.resource_path("assests/MultiUnits.ico")
         self.iconbitmap(icon_path)
         style_path = self.resource_path('assests/Forest-ttk-theme-master/forest-dark.tcl')
         self.tk.call('source', style_path)
-        ttk.Style().theme_use('forest-dark')
-        s = ttk.Style()
+        # ttk.Style().theme_use('forest-dark')
+        # s = ttk.Style()
         self.protocol("WM_DELETE_WINDOW",self.close_window)
-        s.configure('red.TFrame', background='red')#2B2B2B
-        s.configure('green.TFrame',background="green")
-        s.configure('blue.TFrame',background="blue")
+        # s.configure('red.TFrame', background='red')#2B2B2B
+        # s.configure('green.TFrame',background="green")
+        # s.configure('blue.TFrame',background="blue")
 
 
         ##vars
         self.raw_comports = serial.tools.list_ports.comports() # comports on pc
         self.comports = self.get_comport_names() #comport names
-        self.list_box_items = tk.Variable(self,value=self.comports)#comport names as string for listbox
+        self.list_box_items = ctk.Variable(self,value=self.comports)#comport names as string for listbox
         self.selected_comports = [] # user selection
-        self.selected_comports_str = tk.StringVar(value=self.selected_comports) # string list
+        self.selected_comports_str = ctk.StringVar(value=self.selected_comports) # string list
         self.devices = []
         self.notebook_Handler = None
-        self.connect_btn_text_str = tk.StringVar(value='Connect')
+        self.connect_btn_text_str = ctk.StringVar(value='Connect')
         self.help_doc = "assests/doc.html"
         #vars for info footer
         self.info_running = False
         self.info_interrupt = False
         self.progress_bar_object = None
         self.current_progress = '0 / 0'
-        self.current_progress_str = tk.StringVar(value=self.current_progress)
+        self.current_progress_str = ctk.StringVar(value=self.current_progress)
         self.current_progress_perc = '0%'
-        self.current_progress_perc_str = tk.StringVar(value=self.current_progress_perc)
+        self.current_progress_perc_str = ctk.StringVar(value=self.current_progress_perc)
         self.elapsed_time = '00:00:00'
-        self.elapsed_time_str = tk.StringVar(value=self.elapsed_time)
+        self.elapsed_time_str = ctk.StringVar(value=self.elapsed_time)
         self.footer_start_time = ''
         
 #frames / gui setup
@@ -101,29 +101,29 @@ class TungstenGui(tk.Tk):
 
         self.config(menu=self.menu_bar)
 # Footer Info Bar
-        self.footer_bar = ttk.Frame()
+        self.footer_bar = ctk.CTkFrame(self)
         self.footer_bar.pack(fill="x",side="bottom")
 
-        self.stager_results_frame = ttk.Frame(self.footer_bar)
+        self.stager_results_frame = ctk.CTkFrame(self.footer_bar)
         self.stager_results_frame.pack(fill="x",side="left")
 
-        self.info_frame = ttk.Frame(self.footer_bar)
+        self.info_frame = ctk.CTkFrame(self.footer_bar)
         self.info_frame.pack(fill="x",side="right")
 
-        self.elapsed_time_label = ttk.Label(self.info_frame,textvariable=self.elapsed_time_str).pack(padx=10,pady=10,side="right")
-        self.current_progress_perc_label = ttk.Label(self.info_frame,textvariable=self.current_progress_perc_str).pack(padx=10,pady=10,side="right")
-        self.current_progress_label = ttk.Label(self.info_frame,textvariable=self.current_progress_str).pack(padx=10,pady=10,side="right")
+        self.elapsed_time_label = ctk.CTkLabel(self.info_frame,textvariable=self.elapsed_time_str).pack(padx=10,pady=10,side="right")
+        self.current_progress_perc_label = ctk.CTkLabel(self.info_frame,textvariable=self.current_progress_perc_str).pack(padx=10,pady=10,side="right")
+        self.current_progress_label = ctk.CTkLabel(self.info_frame,textvariable=self.current_progress_str).pack(padx=10,pady=10,side="right")
 
 # Side bar
 
-        self.side_bar = ttk.Frame()
+        self.side_bar = ctk.CTkFrame(self)
         self.side_bar.pack(fill="y",side="left")
         #create widgets
-        self.side_bar_run_btn  = ttk.Button(self.side_bar,state='disable',text="Run",command=lambda: threading.Thread(daemon=True,target=self.run_btn_press).start())
-        self.side_bar_connect_btn = ttk.Button(self.side_bar,textvariable=self.connect_btn_text_str,command=lambda: threading.Thread(daemon=True,target=self.connect_disconnect_btn).start())
+        self.side_bar_run_btn  = ctk.CTkButton(self.side_bar,state='disable',text="Run",command=lambda: threading.Thread(daemon=True,target=self.run_btn_press).start())
+        self.side_bar_connect_btn = ctk.CTkButton(self.side_bar,textvariable=self.connect_btn_text_str,command=lambda: threading.Thread(daemon=True,target=self.connect_disconnect_btn).start())
         self.side_bar_listbox = tk.Listbox(self.side_bar,listvariable=self.list_box_items,font=('',14),height=5,width=12)
-        self.side_bar_selected_devices_frame= ttk.LabelFrame(self.side_bar,text="Selected Devices")
-        self.side_bar_selected_devices_placeholder = ttk.Label(self.side_bar_selected_devices_frame,textvariable=self.selected_comports_str,wraplength=55)
+        self.side_bar_selected_devices_frame= ctk.CTkFrame(self.side_bar)
+        self.side_bar_selected_devices_placeholder = ctk.CTkLabel(self.side_bar_selected_devices_frame,textvariable=self.selected_comports_str,wraplength=55)
         #functions on click listbox
         self.side_bar_listbox.bind('<<ListboxSelect>>', lambda event: self.items_selected(event))
 
@@ -148,23 +148,23 @@ class TungstenGui(tk.Tk):
 # Main
 
     # check buttons
-        self.check_buttons = ttk.Frame()
+        self.check_buttons = ctk.CTkFrame(self)
         self.check_buttons.pack(fill="both")
 
         self.check_buttons.columnconfigure((1,2,3),weight=0)
         self.check_buttons.rowconfigure((1),weight=1)
 
         #check options values
-        self.check_push_pers = tk.IntVar()
-        self.check_push_firm = tk.IntVar()
-        self.check_push_BLE = tk.IntVar()
+        self.check_push_pers = ctk.IntVar()
+        self.check_push_firm = ctk.IntVar()
+        self.check_push_BLE = ctk.IntVar()
 
-        self.check_3=ttk.Checkbutton(self.check_buttons, text="Push Firmware",variable=self.check_push_firm).grid(row=1,column=1,padx=1,pady=1,sticky="w")
-        self.check_2=ttk.Checkbutton(self.check_buttons, text="Push Personality",variable=self.check_push_pers).grid(row=1,column=2,padx=1,pady=1,sticky="w")
-        self.check_4=ttk.Checkbutton(self.check_buttons, text="Push BLE",variable=self.check_push_BLE).grid(row=1,column=3,padx=1,pady=1,sticky="w")
+        self.check_3=ctk.CTkCheckBox(self.check_buttons, text="Push Firmware",variable=self.check_push_firm).grid(row=1,column=1,padx=1,pady=1,sticky="w")
+        self.check_2=ctk.CTkCheckBox(self.check_buttons, text="Push Personality",variable=self.check_push_pers).grid(row=1,column=2,padx=1,pady=1,sticky="w")
+        self.check_4=ctk.CTkCheckBox(self.check_buttons, text="Push BLE",variable=self.check_push_BLE).grid(row=1,column=3,padx=1,pady=1,sticky="w")
 
     # file selection 
-        self.file_selection = ttk.Frame()
+        self.file_selection = ctk.CTkFrame(self)
         self.file_selection.pack(fill="both")
         #create grid on frame
         self.file_selection.columnconfigure((1,2),weight=0)
@@ -174,17 +174,17 @@ class TungstenGui(tk.Tk):
         self.firmware_path = None
         self.personality_path = None
         self.ble_path = None
-        self.firmware_path_str = tk.StringVar(value=self.firmware_path)
-        self.personality_path_str = tk.StringVar(value=self.personality_path)
-        self.ble_path_str = tk.StringVar(value=self.ble_path)
+        self.firmware_path_str = ctk.StringVar(value=self.firmware_path)
+        self.personality_path_str = ctk.StringVar(value=self.personality_path)
+        self.ble_path_str = ctk.StringVar(value=self.ble_path)
 
         #create widgets
-        self.select_firmware_btn  = ttk.Button(self.file_selection,text="Firmware",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("firm",)).start())
-        self.select_personality_btn  = ttk.Button(self.file_selection,text="Personality",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("pers",)).start())
-        self.select_ble_btn  = ttk.Button(self.file_selection,text="BLE",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("ble",)).start())
-        self.firmware_label = ttk.Label(self.file_selection,textvariable=self.firmware_path_str)
-        self.personality_label = ttk.Label(self.file_selection,textvariable=self.personality_path_str)
-        self.ble_label = ttk.Label(self.file_selection,textvariable=self.ble_path_str)
+        self.select_firmware_btn  = ctk.CTkButton(self.file_selection,text="Firmware",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("firm",)).start())
+        self.select_personality_btn  = ctk.CTkButton(self.file_selection,text="Personality",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("pers",)).start())
+        self.select_ble_btn  = ctk.CTkButton(self.file_selection,text="BLE",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("ble",)).start())
+        self.firmware_label = ctk.CTkLabel(self.file_selection,textvariable=self.firmware_path_str)
+        self.personality_label = ctk.CTkLabel(self.file_selection,textvariable=self.personality_path_str)
+        self.ble_label = ctk.CTkLabel(self.file_selection,textvariable=self.ble_path_str)
 
         #place widgets
         self.select_firmware_btn.grid(row=1,column=1,padx=2,pady=2)
@@ -194,12 +194,12 @@ class TungstenGui(tk.Tk):
         self.personality_label.grid(row=2,column=2,padx=2,pady=2,sticky="w")
         self.ble_label.grid(row=3,column=2,padx=2,pady=2,sticky="w")
     #display tabs
-        self.tab_view = ttk.Notebook()
+        self.tab_view = ctk.CTkTabview(self)
         self.tab_view.pack(fill="both",expand=True,padx=5,pady=5)
 
-        self.new_pad = ttk.Frame(self.tab_view)
+        #self.new_pad = ctk.CTkFrame(self.tab_view)
 
-        self.tab_view.add(self.new_pad,text="Tab 1")
+        self.tab_view.add("Tab 1")
 
 
         self.mainloop()
@@ -210,7 +210,7 @@ class TungstenGui(tk.Tk):
             self.notebook_Handler.interrupt()
         labels = []
         for device in self.devices:
-            pad = ttk.Frame(self.tab_view)
+            pad = ctk.CTkFrame(self.tab_view)
             self.tab_view.add(pad,text=device.serial_port_name)
             label = tk.Text(pad)
             label.pack(expand=True,fill="both")
@@ -331,7 +331,7 @@ class TungstenGui(tk.Tk):
         #
         self.clear_child_in_frame(self.tab_view)
         #needs placeholder
-        self.side_bar_selected_devices_placeholder = ttk.Label(self.side_bar_selected_devices_frame,textvariable=self.selected_comports_str,wraplength=55)
+        self.side_bar_selected_devices_placeholder = ctk.CTkLabel(self.side_bar_selected_devices_frame,textvariable=self.selected_comports_str,wraplength=55)
         self.side_bar_selected_devices_placeholder.pack(padx=20,pady=20)
 
     def create_threadpool(self,function,items:list) ->list:
@@ -350,7 +350,7 @@ class TungstenGui(tk.Tk):
                 color = '#217346'
             else:
                 color = '#b40d1b'
-            label = ttk.Label(parent_label,text=result[0],background=color,wraplength=warplen)
+            label = ctk.CTkLabel(parent_label,text=result[0],background=color,wraplength=warplen)
             label.pack(padx=5, pady=5,side=align)
 
     def clear_child_in_frame(self,*frames):

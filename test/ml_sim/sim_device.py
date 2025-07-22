@@ -176,7 +176,7 @@ if __name__ == '__main__':
     port = "COM3"
     logger.info(f'Starting ML simulator on: {port}')
     unit = Device(port)
-    #unit.write_commands(["esc","4"])
-    time.sleep(20)
+    #threading.Thread(target=unit.constant_write,args=(False,)).start()
+    time.sleep(60)
     unit.listener.interrupt()
     unit.disconnect()
