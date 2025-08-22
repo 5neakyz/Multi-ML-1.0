@@ -49,4 +49,4 @@ class Listener():
                     line = split[-1]
             stripped = line.replace(b'\r',b' ').replace(b'\x1b',b'').replace(b'[2J',b'').replace(b':',b': ')
             if stripped:
-                self.buffer_txt += stripped.decode("utf-8")
+                self.buffer_txt += stripped.decode("utf-8",errors='replace')

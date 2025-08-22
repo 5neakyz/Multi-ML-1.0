@@ -182,7 +182,7 @@ if __name__ == '__main__':
     logging.basicConfig(format=format, level=logging.INFO,
                         datefmt="%H:%M:%S")
     
-    port = "COM4"
+    port = "COM1"
     logging.info(f'Starting ML simulator on: {port}')
     unit = Device(port)
     unit.write_commands(["esc","4"])

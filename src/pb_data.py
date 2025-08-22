@@ -5,7 +5,7 @@ class pb_data():
 
     progress: int = 0
     total: int = 0
-
+            
     def add_to_progress(self, value:int) -> int:
         self.progress += value
         return self.progress
