@@ -26,7 +26,7 @@ class TungstenGui(tk.Tk):
     def __init__(self):
         super().__init__()
         # configure window
-        self.title("ML Multi Stager v2.0.0")
+        self.title("ML Multi Stager v2.1.0")
         self.geometry(f"{800}x{600}")
 
         #self.bind('<KeyPress>', self.onKeyPress)
@@ -34,9 +34,9 @@ class TungstenGui(tk.Tk):
 
         #style
         self.option_add("*tearOff", False) # This is always a good idea
-        icon_path = self.resource_path("../assests/seedouble.ico")
+        icon_path = self.resource_path("assests/MultiUnits.ico")
         self.iconbitmap(icon_path)
-        style_path = self.resource_path('../assests/Forest-ttk-theme-master/forest-dark.tcl')
+        style_path = self.resource_path('assests/Forest-ttk-theme-master/forest-dark.tcl')
         self.tk.call('source', style_path)
         ttk.Style().theme_use('forest-dark')
         s = ttk.Style()
@@ -55,7 +55,7 @@ class TungstenGui(tk.Tk):
         self.devices = []
         self.notebook_Handler = None
         self.connect_btn_text_str = tk.StringVar(value='Connect')
-        self.help_doc = "../assests/doc.html"
+        self.help_doc = "assests/doc.html"
         #vars for info footer
         self.info_running = False
         self.info_interrupt = False
