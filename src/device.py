@@ -114,7 +114,7 @@ class Device(SerialPortManger):
         '''Ml30s on 3.17 need you to either wait 10 seconds or Ctrl X to confirm and install, 
         if you press esc it will cancel install'''
         logger.info(f"{self.serial_port_name}: Checking unit response")
-        for _ in range(30):
+        for _ in range(60):
             lines = self.listener.get_buffer()
 
             if not lines: continue
@@ -152,21 +152,12 @@ class Device(SerialPortManger):
 
     def calculate_amount_bytes(self,values:bytearray) -> int:
         count = 0
+        if len(values) > 1000:
+            values = values[3:1023] # cut head and tail
+        else: # all payload packets will be 1k, last packet is just 1 byte Ack
+            return count
         for value in values:
-            if value == 1: # Start of Header
-                continue
-            if value == 2: # Start of text char
-                continue
-            if value == 4: # end of transmission
-                continue
             if value == 26: # Blank Char
                 continue
-            if value == 127: # Del
-                continue
-            if value == 218: # *shrugs*
-                continue
-            if value == 254: # *shrugs*
-                continue
-            
             count += 1
         return count

@@ -1,33 +1,33 @@
-2025-08-22 19:05:01,466 - tungsten_gui - INFO - Selected: COM5
-2025-08-22 19:05:02,092 - tungsten_gui - INFO - Connecting : ['COM5']
-2025-08-22 19:05:02,153 - serial_port_manager - INFO - COM5: Connection Established
-2025-08-22 19:05:02,153 - device - INFO - COM5: Creating Device Object
-2025-08-22 19:05:02,153 - listener - INFO - COM5: Creating Listener Object
-2025-08-22 19:05:02,153 - listener - INFO - COM5: Starting Listener
-2025-08-22 19:05:02,154 - listener - INFO - COM5: Thread Started, Listening
-2025-08-22 19:05:02,156 - device - INFO - COM5: Sending Command(s): ['esc']
-2025-08-22 19:05:02,657 - device - INFO - COM5: is Alive
-2025-08-22 19:05:02,664 - notebook_handler - INFO - Creating Notebook Handler
-2025-08-22 19:05:02,664 - notebook_handler - INFO - Starting NB Handler
-2025-08-22 19:05:02,664 - notebook_handler - INFO - COM5: NB Thread Started
-2025-08-22 19:05:04,969 - stager - INFO - STAGER: Erasing Config
-2025-08-22 19:05:04,969 - device - INFO - COM5: Sending Command(s): ['esc']
-2025-08-22 19:05:05,471 - device - INFO - COM5: is Alive
-2025-08-22 19:05:05,471 - device - INFO - COM5: Sending Command(s): ['esc', '9', 'h', 'y']
-2025-08-22 19:05:05,971 - stager - INFO - STAGER: Pushing Personality
-2025-08-22 19:05:05,971 - device - INFO - COM5: Sending Command(s): ['esc']
-2025-08-22 19:05:06,472 - device - INFO - COM5: is Alive
-2025-08-22 19:05:06,472 - device - INFO - COM5: Sending Command(s): ['esc', '6']
-2025-08-22 19:05:07,472 - listener - INFO - COM5: Pausing Listener
-2025-08-22 19:05:07,973 - device - INFO - COM5: initiating Xmodem send
-2025-08-22 19:05:08,593 - xmodem.XMODEM - INFO - Transmission successful (ACK received).
-2025-08-22 19:05:08,594 - device - INFO - COM5:Data Stream Status: True
-2025-08-22 19:05:08,594 - listener - INFO - COM5: continuing Listener
-2025-08-22 19:05:08,594 - device - INFO - COM5: Checking unit response
-2025-08-22 19:05:10,095 - device - INFO - COM5 Unit replied with Hello
-2025-08-22 19:05:10,095 - device - INFO - COM5: waiting for unit to install and unlock
-2025-08-22 19:05:10,095 - device - INFO - COM5: Sending Command(s): ['esc']
-2025-08-22 19:05:10,596 - device - INFO - COM5: is Alive
-2025-08-22 19:05:10,596 - device - INFO - COM5 Pushing finished Returning True
-2025-08-22 19:05:10,596 - tungsten_gui - INFO - [['COM5', True]]
-2025-08-22 19:05:10,797 - tungsten_gui - INFO - stopping footer info update loop
+2025-08-22 19:27:22,642 - tungsten_gui - INFO - Selected: COM4
+2025-08-22 19:27:23,197 - tungsten_gui - INFO - Connecting : ['COM4']
+2025-08-22 19:27:23,257 - serial_port_manager - INFO - COM4: Connection Established
+2025-08-22 19:27:23,257 - device - INFO - COM4: Creating Device Object
+2025-08-22 19:27:23,257 - listener - INFO - COM4: Creating Listener Object
+2025-08-22 19:27:23,257 - listener - INFO - COM4: Starting Listener
+2025-08-22 19:27:23,257 - listener - INFO - COM4: Thread Started, Listening
+2025-08-22 19:27:23,261 - device - INFO - COM4: Sending Command(s): ['esc']
+2025-08-22 19:27:23,762 - device - INFO - COM4: is Alive
+2025-08-22 19:27:23,768 - notebook_handler - INFO - Creating Notebook Handler
+2025-08-22 19:27:23,768 - notebook_handler - INFO - Starting NB Handler
+2025-08-22 19:27:23,768 - notebook_handler - INFO - COM4: NB Thread Started
+2025-08-22 19:27:29,154 - stager - INFO - STAGER: Erasing Config
+2025-08-22 19:27:29,154 - device - INFO - COM4: Sending Command(s): ['esc']
+2025-08-22 19:27:29,656 - device - INFO - COM4: is Alive
+2025-08-22 19:27:29,656 - device - INFO - COM4: Sending Command(s): ['esc', '9', 'h', 'y']
+2025-08-22 19:27:30,157 - stager - INFO - STAGER: Pushing Firmware
+2025-08-22 19:27:30,157 - device - INFO - COM4: Sending Command(s): ['esc']
+2025-08-22 19:27:30,657 - device - INFO - COM4: is Alive
+2025-08-22 19:27:30,657 - device - INFO - COM4: Sending Command(s): ['esc', '6']
+2025-08-22 19:27:31,658 - listener - INFO - COM4: Pausing Listener
+2025-08-22 19:27:32,159 - device - INFO - COM4: initiating Xmodem send
+2025-08-22 19:28:46,973 - xmodem.XMODEM - INFO - Transmission successful (ACK received).
+2025-08-22 19:28:46,973 - device - INFO - COM4:Data Stream Status: True
+2025-08-22 19:28:46,973 - listener - INFO - COM4: continuing Listener
+2025-08-22 19:28:46,973 - device - INFO - COM4: Checking unit response
+2025-08-22 19:29:01,982 - device - WARNING - COM4, CHECKER TIMEOUT
+2025-08-22 19:29:01,982 - tungsten_gui - INFO - [['COM4', False]]
+2025-08-22 19:29:02,149 - tungsten_gui - INFO - stopping footer info update loop
+2025-08-22 19:33:18,645 - listener - INFO - COM4: Interrupting Listener
+2025-08-22 19:33:18,646 - serial_port_manager - INFO - COM4: Disconnected
+2025-08-22 19:33:18,756 - notebook_handler - INFO - Interrupting NB Handler
+2025-08-22 19:33:18,790 - tungsten_gui - INFO - Safely closed

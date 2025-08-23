@@ -13,5 +13,6 @@ def calculate_amount_bytes(values:bytearray) -> int:
             count += 1
     return count - 5
 
-print(Packet[2])
-print(calculate_amount_bytes(Packet))
+print(Packet)
+print(Packet[3:1023])
+#print(calculate_amount_bytes(Packet))
