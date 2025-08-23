@@ -1,7 +1,8 @@
+import math
 import dataclasses
 
 @dataclasses.dataclass
-class pb_data():
+class Pb_data():
 
     progress: int = 0
     total: int = 0
@@ -17,12 +18,5 @@ class pb_data():
         if self.progress > self.total:
                 return f'100%'
         perc = self.progress/self.total * 100
-        return f'{round(perc)}%'
-
-if __name__ == '__main__':
-    pb = pb_data()
-    pb.total = 200
-    for _ in range(100):
-        pb.add_to_progress(3)
-        print(pb.current_progress())
-        print(pb.perc_current_progress())
+        return f'{round(perc,1)}%'
+    

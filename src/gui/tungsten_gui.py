@@ -14,10 +14,10 @@ import concurrent.futures
 
 #my classes
 from device import Device
-from notebook_handler import NotebookHandler
+from gui.notebook_handler import NotebookHandler
 from stager import Stager
-from pb_data import pb_data
-from help_menu import HelpMenu
+from pb_data import Pb_data
+from gui.help_menu import HelpMenu
 #247F4C
 
 logger = logging.getLogger(__name__)
@@ -34,9 +34,9 @@ class TungstenGui(tk.Tk):
 
         #style
         self.option_add("*tearOff", False) # This is always a good idea
-        icon_path = self.resource_path("assests/seedouble.ico")
+        icon_path = self.resource_path("../assests/seedouble.ico")
         self.iconbitmap(icon_path)
-        style_path = self.resource_path('assests/Forest-ttk-theme-master/forest-dark.tcl')
+        style_path = self.resource_path('../assests/Forest-ttk-theme-master/forest-dark.tcl')
         self.tk.call('source', style_path)
         ttk.Style().theme_use('forest-dark')
         s = ttk.Style()
@@ -55,7 +55,7 @@ class TungstenGui(tk.Tk):
         self.devices = []
         self.notebook_Handler = None
         self.connect_btn_text_str = tk.StringVar(value='Connect')
-        self.help_doc = "assests/doc.html"
+        self.help_doc = "../assests/doc.html"
         #vars for info footer
         self.info_running = False
         self.info_interrupt = False
@@ -248,7 +248,7 @@ class TungstenGui(tk.Tk):
         if not self.firmware_path and not self.personality_path and not self.ble_path:
             return False
         
-        self.progress_bar_object = pb_data()
+        self.progress_bar_object = Pb_data()
         file_size = 0
         if self.check_push_firm.get():
             file_size += os.stat(self.firmware_path).st_size

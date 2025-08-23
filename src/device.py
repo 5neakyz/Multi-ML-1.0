@@ -1,8 +1,10 @@
 import time
+import os
 import logging
 from xmodem import XMODEM
 from serial_port_manager import SerialPortManger
 from listener import Listener
+from calc_sent_bytes import Calc_sent_bytes
 
 logger = logging.getLogger(__name__)
 
@@ -11,6 +13,7 @@ class Device(SerialPortManger):
         super().__init__(parent)
         logger.info(f'{self.serial_port_name}: Creating Device Object')
         self.progress_bar_object = progress_bar_object
+        self.byte_calculator = Calc_sent_bytes()
         self.listener = Listener(self)
         self.listener.start_listening()
 
@@ -62,7 +65,8 @@ class Device(SerialPortManger):
     
     def putc(self,data, timeout=1):
         pbytes = self.serial_port.write(data)
-        self.progress_bar_object.add_to_progress(self.calculate_amount_bytes(data))
+        if len(data) > 1000:
+            self.progress_bar_object.add_to_progress(self.byte_calculator.get_current_payload_size())
 
         return  pbytes or None 
     
@@ -88,7 +92,8 @@ class Device(SerialPortManger):
         time.sleep(1)
         self.listener.pause_read()
         time.sleep(0.5)
-
+        
+        self.byte_calculator.setup(os.stat(path).st_size)
         #xmodem send file
         logger.info(f'{self.serial_port_name}: initiating Xmodem send')
         status = XMODEM(self.getc, self.putc,'xmodem1k').send(stream)
@@ -150,14 +155,3 @@ class Device(SerialPortManger):
         logger.warning(f'{self.serial_port_name}, responsive check TIMEOUT')
         return False
 
-    def calculate_amount_bytes(self,values:bytearray) -> int:
-        count = 0
-        if len(values) > 1000:
-            values = values[3:1023] # cut head and tail
-        else: # all payload packets will be 1k, last packet is just 1 byte Ack
-            return count
-        for value in values:
-            if value == 26: # Blank Char
-                continue
-            count += 1
-        return count
