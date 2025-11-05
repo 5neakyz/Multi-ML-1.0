@@ -17,11 +17,6 @@ class HelpMenu(tk.Toplevel):
 
         #style
         self.option_add("*tearOff", False) # This is always a good idea
-        icon_path = self.resource_path("assests/myicon.ico")
-        self.iconbitmap(icon_path)
-        style_path = self.resource_path('assests/Forest-ttk-theme-master/forest-dark.tcl')
-        #self.tk.call('source', style_path)
-        ttk.Style().theme_use('forest-dark')
         s = ttk.Style()
         self.protocol("WM_DELETE_WINDOW",self.close_window)
         s.configure('red.TFrame', background='red')#2B2B2B
@@ -78,5 +73,6 @@ class HelpMenu(tk.Toplevel):
         """ Get absolute path to resource, works for dev and for PyInstaller """
         base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
         return os.path.join(base_path, relative_path)
+    
 if __name__ == "__main__":
     HelpMenu()   

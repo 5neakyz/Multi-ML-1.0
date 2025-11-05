@@ -18,11 +18,12 @@ from gui.notebook_handler import NotebookHandler
 from stager import Stager
 from pb_data import Pb_data
 from gui.help_menu import HelpMenu
+from gui.menu_bar import MenuBar
 #247F4C
 
 logger = logging.getLogger(__name__)
 
-class Bryllium(ctk.CTk):
+class Beryllium(ctk.CTk):
     def __init__(self):
         super().__init__()
         # configure window
@@ -36,14 +37,11 @@ class Bryllium(ctk.CTk):
         self.option_add("*tearOff", False) # This is always a good idea
         icon_path = self.resource_path("../assests/MultiUnits.ico")
         self.iconbitmap(icon_path)
-        style_path = self.resource_path('../assests/Forest-ttk-theme-master/forest-dark.tcl')
-        self.tk.call('source', style_path)
-        # ttk.Style().theme_use('forest-dark')
         # s = ttk.Style()
-        self.protocol("WM_DELETE_WINDOW",self.close_window)
         # s.configure('red.TFrame', background='red')#2B2B2B
         # s.configure('green.TFrame',background="green")
         # s.configure('blue.TFrame',background="blue")
+        self.protocol("WM_DELETE_WINDOW",self.close_window)
 
 
         ##vars
@@ -71,34 +69,7 @@ class Bryllium(ctk.CTk):
 #frames / gui setup
 
 # Menu Bar
-
-        self.menu_bar = tk.Menu(self)
-
-        self.menu_settings = tk.Menu(self.menu_bar, tearoff=0)
-        self.menu_file = tk.Menu(self.menu_bar)
-        self.menu_help = tk.Menu(self.menu_bar)
-        
-        #self.menu_bar.add_cascade(menu=self.menu_file, label='File')
-        self.menu_bar.add_cascade(menu=self.menu_settings, label='Settings')
-        self.menu_bar.add_cascade(menu=self.menu_help, label='Help')
-        
-        self.menu_settings.add_command(label="9HY",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","h","y"],)).start())
-        self.menu_settings.add_command(label="9IY",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","i","y"],)).start())
-        self.menu_settings.add_command(label="9JY",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","j","y"],)).start())
-        self.menu_settings.add_command(label="9KA",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","k","a"],)).start())
-        self.menu_settings.add_command(label="9KB",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","k","b"],)).start())
-        self.menu_settings.add_command(label="9L",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","l"],)).start())
-
-        self.menu_help.add_command(label="Help",command=lambda: HelpMenu(self))
-
-        #self.menu_bar.add_command(label="esc: Main Menu",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc"],)).start())
-        self.menu_bar.add_command(label="3: View Config",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","3"],)).start())
-        self.menu_bar.add_command(label="4: Status Screen",command=lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","4"],)).start())
-        self.menu_bar.add_command(label="F: Prod TS",command=lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","f"],)).start())
-        self.menu_bar.add_command(label="G: Sys Info",command=lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","g "],)).start())
-        
-
-
+        self.menu_bar = MenuBar(self,self.send_commands)
         self.config(menu=self.menu_bar)
 # Footer Info Bar
         self.footer_bar = ctk.CTkFrame(self)
@@ -444,4 +415,4 @@ class Bryllium(ctk.CTk):
 if __name__ == "__main__":
     format = "%(asctime)s.%(msecs)04d - %(message)s"
     logging.basicConfig(format=format,level=logging.INFO,datefmt="%H:%M:%S")
-    TungstenGui()
+    Beryllium()
