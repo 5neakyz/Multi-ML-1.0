@@ -1,5 +1,6 @@
 import os
 import sys
+
 def resource_path(self,relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))

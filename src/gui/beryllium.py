@@ -16,9 +16,10 @@ import concurrent.futures
 from device import Device
 from gui.notebook_handler import NotebookHandler
 from stager import Stager
-from pb_data import Pb_data
+from utils.pb_data import Pb_data
 from gui.help_menu import HelpMenu
 from gui.menu_bar import MenuBar
+from gui.footer import Footer
 #247F4C
 
 logger = logging.getLogger(__name__)
@@ -45,45 +46,23 @@ class Beryllium(ctk.CTk):
 
 
         ##vars
-        self.raw_comports = serial.tools.list_ports.comports() # comports on pc
-        self.comports = self.get_comport_names() #comport names
-        self.list_box_items = ctk.Variable(self,value=self.comports)#comport names as string for listbox
         self.selected_comports = [] # user selection
         self.selected_comports_str = ctk.StringVar(value=self.selected_comports) # string list
         self.devices = []
         self.notebook_Handler = None
         self.connect_btn_text_str = ctk.StringVar(value='Connect')
         self.help_doc = "../assests/doc.html"
-        #vars for info footer
-        self.info_running = False
-        self.info_interrupt = False
-        self.progress_bar_object = None
-        self.current_progress = '0 / 0'
-        self.current_progress_str = ctk.StringVar(value=self.current_progress)
-        self.current_progress_perc = '0%'
-        self.current_progress_perc_str = ctk.StringVar(value=self.current_progress_perc)
-        self.elapsed_time = '00:00:00'
-        self.elapsed_time_str = ctk.StringVar(value=self.elapsed_time)
-        self.footer_start_time = ''
+
+        self.progress_bar_object = Pb_data()
         
 #frames / gui setup
 
 # Menu Bar
-        self.menu_bar = MenuBar(self,self.send_commands)
+        self.menu_bar = MenuBar(self)
         self.config(menu=self.menu_bar)
 # Footer Info Bar
-        self.footer_bar = ctk.CTkFrame(self)
+        self.footer_bar = Footer(self)
         self.footer_bar.pack(fill="x",side="bottom")
-
-        self.stager_results_frame = ctk.CTkFrame(self.footer_bar)
-        self.stager_results_frame.pack(fill="x",side="left")
-
-        self.info_frame = ctk.CTkFrame(self.footer_bar)
-        self.info_frame.pack(fill="x",side="right")
-
-        self.elapsed_time_label = ctk.CTkLabel(self.info_frame,textvariable=self.elapsed_time_str).pack(padx=10,pady=10,side="right")
-        self.current_progress_perc_label = ctk.CTkLabel(self.info_frame,textvariable=self.current_progress_perc_str).pack(padx=10,pady=10,side="right")
-        self.current_progress_label = ctk.CTkLabel(self.info_frame,textvariable=self.current_progress_str).pack(padx=10,pady=10,side="right")
 
 # Side bar
 
@@ -92,11 +71,9 @@ class Beryllium(ctk.CTk):
         #create widgets
         self.side_bar_run_btn  = ctk.CTkButton(self.side_bar,state='disable',text="Run",command=lambda: threading.Thread(daemon=True,target=self.run_btn_press).start())
         self.side_bar_connect_btn = ctk.CTkButton(self.side_bar,textvariable=self.connect_btn_text_str,command=lambda: threading.Thread(daemon=True,target=self.connect_disconnect_btn).start())
-        self.side_bar_listbox = tk.Listbox(self.side_bar,listvariable=self.list_box_items,font=('',14),height=5,width=12)
         self.side_bar_selected_devices_frame= ctk.CTkFrame(self.side_bar)
         self.side_bar_selected_devices_placeholder = ctk.CTkLabel(self.side_bar_selected_devices_frame,textvariable=self.selected_comports_str,wraplength=55)
         #functions on click listbox
-        self.side_bar_listbox.bind('<<ListboxSelect>>', lambda event: self.items_selected(event))
 
         #create grid
         self.columnconfigure(1,weight=1)
@@ -105,13 +82,6 @@ class Beryllium(ctk.CTk):
         #place widgets
         self.side_bar_run_btn.grid(row=1,column=1,sticky="new",padx=20, pady=(20, 0))
         self.side_bar_connect_btn.grid(row=2,column=1,sticky="new",padx=20, pady=(20, 0))
-        # list box
-        self.side_bar_listbox.grid(row=4,column=1,sticky="nw",padx=20, pady=(20, 0))
-        # alternate line colors
-        try:
-            for i in range(0,len(self.comports),2):
-                self.side_bar_listbox.itemconfigure(i, background='#242424')
-        except Exception as e: print(f'LIST BOX EXCEPTION{e}')
 
         self.side_bar_selected_devices_frame.grid(row=5,column=1,sticky="new",padx=20, pady=(20, 0))
         self.side_bar_selected_devices_placeholder.pack(padx=20,pady=20)
@@ -194,12 +164,7 @@ class Beryllium(ctk.CTk):
         #button setup
         self.side_bar_run_btn.configure(state="disable")
         #footer loop / info setup
-        self.info_running = True
-        self.info_interrupt = False
-        self.footer_start_time = time.time()
-        self.clear_child_in_frame(self.stager_results_frame)
-        self.pb_setup()
-        threading.Thread(daemon=True,target=self.update_footer_info_loop).start()
+        self.footer_bar.start_update_info_loop()
         #stager setup
         stager_thread = Stager(self.devices)
         #tasks(pers , firm , BLE)
@@ -211,41 +176,10 @@ class Beryllium(ctk.CTk):
         # start stager
         results = stager_thread.start()
         logger.info(results)
-        self.display_results(self.stager_results_frame,results,warplen=400,align="left")
+        #self.display_results(self.stager_results_frame,results,warplen=400,align="left")
         self.info_running = False
         self.side_bar_run_btn.configure(state="enable")
-
-    def pb_setup(self):
-        if not self.firmware_path and not self.personality_path and not self.ble_path:
-            return False
-        
-        self.progress_bar_object = Pb_data()
-        file_size = 0
-        if self.check_push_firm.get():
-            file_size += os.stat(self.firmware_path).st_size
-        if self.check_push_pers.get():
-            file_size += os.stat(self.personality_path).st_size
-        if self.check_push_BLE.get():
-            file_size += os.stat(self.ble_path).st_size
-
-        self.progress_bar_object.total = file_size * len(self.devices)
-        #gui setup
-        self.current_progress = f'{self.progress_bar_object.progress} / {self.progress_bar_object.total}'
-        self.current_progress_str.set(self.current_progress)
-        
-    def update_footer_info_loop(self):
-        while self.info_running and not self.info_interrupt:
-            self.current_progress = f'{self.progress_bar_object.progress} / {self.progress_bar_object.total}'
-            self.current_progress_str.set(self.current_progress)
-
-            self.current_progress_perc = self.progress_bar_object.perc_current_progress()
-            self.current_progress_perc_str.set(self.current_progress_perc)
-
-            self.elapsed_time = time.strftime('%H:%M:%S', time.gmtime(time.time() - self.footer_start_time))
-            self.elapsed_time_str.set(self.elapsed_time)
-            time.sleep(0.2)
-        logger.info(f'stopping footer info update loop')
-
+  
     def connect_disconnect_btn(self):
         if self.connect_btn_text_str.get() == 'Connect':
             self.connect_btn_text_str.set('Disconnect')
@@ -255,34 +189,43 @@ class Beryllium(ctk.CTk):
             self.disconnect_btn_press()
 
     def connect_btn_press(self):
-        self.side_bar_connect_btn.configure(state='disable')
-        logger.info(f'Connecting : {self.selected_comports}')
-        #change frame text 
-        self.side_bar_selected_devices_frame.configure(text="Connecting")
-        #remove all in selected devices frame
-        self.clear_child_in_frame(self.side_bar_selected_devices_frame)
-        #ensures no duplicates of already existing objects, has no function on first use
-        temp_devices_list = []
-        for device in self.devices:
-            temp_devices_list.append(device.serial_port_name)
-        #creates device objects for devices that dont already exist
-        for device in self.selected_comports:
-            if device not in temp_devices_list:
-                self.devices.append(Device(device))
-        #create threadpool for all devices threadpool(function , devices)
-        results = self.create_threadpool(self.is_connection_live,self.devices)
-        #display results
-        self.display_results(self.side_bar_selected_devices_frame,results)
+        self.progress_bar_object.total = 100
+        self.progress_bar_object.add_to_progress(10)
+        print(self.progress_bar_object.perc_current_progress())
+        self.footer_bar.start_update_info_loop()
 
-        #insert logic for buttons
-        if all(result[1] for result in results):
-            self.side_bar_run_btn.configure(state='enable')
+        time.sleep(2)
 
-        #reset frame text
-        self.side_bar_selected_devices_frame.configure(text="Selected Devices")
-        self.side_bar_connect_btn.configure(state='enable')
-        #notebook
-        self.populate_notebook()
+        self.progress_bar_object.add_to_progress(10)
+
+        # self.side_bar_connect_btn.configure(state='disable')
+        # logger.info(f'Connecting : {self.selected_comports}')
+        # #change frame text 
+        # self.side_bar_selected_devices_frame.configure(text="Connecting")
+        # #remove all in selected devices frame
+        # self.clear_child_in_frame(self.side_bar_selected_devices_frame)
+        # #ensures no duplicates of already existing objects, has no function on first use
+        # temp_devices_list = []
+        # for device in self.devices:
+        #     temp_devices_list.append(device.serial_port_name)
+        # #creates device objects for devices that dont already exist
+        # for device in self.selected_comports:
+        #     if device not in temp_devices_list:
+        #         self.devices.append(Device(device))
+        # #create threadpool for all devices threadpool(function , devices)
+        # results = self.create_threadpool(self.is_connection_live,self.devices)
+        # #display results
+        # self.display_results(self.side_bar_selected_devices_frame,results)
+
+        # #insert logic for buttons
+        # if all(result[1] for result in results):
+        #     self.side_bar_run_btn.configure(state='enable')
+
+        # #reset frame text
+        # self.side_bar_selected_devices_frame.configure(text="Selected Devices")
+        # self.side_bar_connect_btn.configure(state='enable')
+        # #notebook
+        # self.populate_notebook()
 
     def disconnect_btn_press(self):
         self.clear_child_in_frame(self.side_bar_selected_devices_frame)
@@ -313,17 +256,6 @@ class Beryllium(ctk.CTk):
                 results.append(x.result())
         return results
 
-    def display_results(self,parent_label,results,warplen:int = 55,align="top"):
-    # Result[0] (string) = COM PORT
-    # Result[1] (bool)= outcome
-        for result in (results):
-            if result[1] == True:
-                color = '#217346'
-            else:
-                color = '#b40d1b'
-            label = ctk.CTkLabel(parent_label,text=result[0],background=color,wraplength=warplen)
-            label.pack(padx=5, pady=5,side=align)
-
     def clear_child_in_frame(self,*frames):
         for frame in frames:
             for widgets in frame.winfo_children():
@@ -342,45 +274,11 @@ class Beryllium(ctk.CTk):
             self.ble_path = path
             self.ble_path_str.set(tail)
         
-    def items_selected(self,event):
-        try:
-            selected_item = event.widget.get(self.side_bar_listbox.curselection()[0])
-            logger.info(f'Selected: {selected_item}')
-            if selected_item in self.selected_comports:
-                (self.selected_comports.remove(selected_item))
-            else:
-                (self.selected_comports.append(selected_item))
-            self.selected_comports_str.set(self.selected_comports)
-        except Exception as e: print(e)
-
     def resource_path(self,relative_path) -> str:
         """ Get absolute path to resource, works for dev and for PyInstaller """
         base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
         return os.path.join(base_path, relative_path)
     
-    def get_comport_names(self)-> list:
-        comport_list = []
-        for item in self.raw_comports:
-            comport_list.append(item.device)
-        return self.sort_comports(comport_list)
-    
-    def sort_comports(self,list):
-        sorted_list = []
-        for comport in list:
-            comport = comport.replace("COM","")
-            try:
-                sorted_list.append(int(comport))
-            except:
-                sorted_list.append(comport)
-
-        sorted_list.sort()
-        list = []
-        
-        for item in sorted_list:
-            item =f"COM{item}"
-            list.append(item)
-        return list
-
     def onKeyPress(self,event):
         print(f'You pressed: {event.keysym}')
 

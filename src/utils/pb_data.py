@@ -20,3 +20,7 @@ class Pb_data():
         perc = self.progress/self.total * 100
         return f'{round(perc,1)}%'
     
+    def reset_all(self):
+        self.progress: int = 0
+        self.total: int = 0
+    

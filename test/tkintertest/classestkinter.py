@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
-
+import threading
 
 class NavBar(tk.Menu):
     def __init__(self, parent):
@@ -13,6 +13,10 @@ class NavBar(tk.Menu):
         #self.add_cascade(menu=self.menu_file, label='File')
         self.add_cascade(menu=self.menu_settings, label='Settings')
         self.add_cascade(menu=self.menu_help, label='Help')
+        self.menu_settings.add_command(label="Test",command = lambda: threading.Thread(daemon=True,target=parent.close_window()).start())
+
+    def testprint(self):
+        print("you called?")
 
 class Footer(tk.Frame):
     def __init__(self, parent):
@@ -29,7 +33,8 @@ class MyApp(tk.Tk):
 
         self.menu_bar = NavBar(self)
         self.config(menu=self.menu_bar)
-
+        self.select_firmware_btn  = tk.Button(self,text="Firmware",command=lambda: threading.Thread(daemon=True,target=self.menu_bar.testprint(),args=("firm",)).start())
+        self.select_firmware_btn.pack()
         self.mainloop()
     
     def close_window(self):
