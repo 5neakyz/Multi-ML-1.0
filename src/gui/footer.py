@@ -10,11 +10,9 @@ logger = logging.getLogger(__name__)
 
 class Footer(ctk.CTkFrame):
     def __init__(self, parent):
-        ctk.CTkFrame.__init__(self, parent)
+        super().__init__(parent)
         # vars
         self.parent = parent
-        self.selected_comports = []
-        self.selected_comports_str = ctk.StringVar(value=self.selected_comports) # string list
         self.info_running = False
         self.info_interrupt = False
         self.current_progress = '0 / 0'
@@ -26,55 +24,19 @@ class Footer(ctk.CTkFrame):
         self.footer_start_time = ''
         self.results = "MESSAGE"
         self.results_str = ctk.StringVar(value=self.results)
-        self.connect_btn_text_str = ctk.StringVar(value='Connect')
-
 
         # layout
-        self.footer_bar = self
-        self.footer_bar.pack(fill="x",side="bottom",padx=1,pady=1)
-        #buttons and connected frame
-        self.footer_select_bar = ctk.CTkFrame(self.footer_bar,border_width=1,height=30)
-        self.footer_select_bar.pack(fill="x",side="top",padx=1,pady=1)
-
-        self.side_bar_run_btn  = ctk.CTkButton(self.footer_select_bar,state='disabled',text="Run",command=lambda: threading.Thread(daemon=True,target=self.place_holder_function_for_test).start())
-        self.side_bar_run_btn.pack(fill="x",side="right",pady=1)
-        self.side_bar_connect_btn = ctk.CTkButton(self.footer_select_bar,textvariable=self.connect_btn_text_str,command=lambda: threading.Thread(daemon=True,target=self.connect_disconnect_btn).start())
-        self.side_bar_connect_btn.pack(fill="x",side="right",padx=10,pady=1)
-        self.side_bar_selected_devices_label =ctk.CTkLabel(self.footer_select_bar,text="Selected:").pack(side="left",padx=10,pady=1)
-        self.side_bar_selected_devices_placeholder = ctk.CTkLabel(self.footer_select_bar,textvariable=self.selected_comports_str).pack(side="left",padx=10,pady=1)
-
+        self.pack(fill="x",side="bottom",padx=1,pady=1)
 
         # info frame
-        self.footer_info_bar = ctk.CTkFrame(self.footer_bar,border_width=1,height=30)
+        self.footer_info_bar = ctk.CTkFrame(self,border_width=1,height=30)
         self.footer_info_bar.pack(fill="x",side="bottom")
-
-        # bottom - footer
-        # self.stager_results_frame = ctk.CTkFrame(self.footer_info_bar)
-        # self.stager_results_frame.pack(fill="x",side="left")
+        
         self.results_label = ctk.CTkLabel(self.footer_info_bar,textvariable=self.results_str).pack(padx=10,pady=1,side="left")
-        # self.info_frame = ctk.CTkFrame(self.footer_info_bar)
-        # self.info_frame.pack(fill="x",side="right")
 
         self.elapsed_time_label = ctk.CTkLabel(self.footer_info_bar,textvariable=self.elapsed_time_str).pack(padx=10,pady=1,side="right")
         self.current_progress_perc_label = ctk.CTkLabel(self.footer_info_bar,textvariable=self.current_progress_perc_str).pack(padx=10,pady=1,side="right")
         self.current_progress_label = ctk.CTkLabel(self.footer_info_bar,textvariable=self.current_progress_str).pack(padx=10,pady=1,side="right")
-
-    def place_holder_function_for_test(self):
-        print("you called?")
-
-    def connect_disconnect_btn(self):
-        if self.connect_btn_text_str.get() == 'Connect':
-            self.connect_btn_text_str.set('Disconnect')
-            #self.connect_btn_press()
-        else:
-            self.connect_btn_text_str.set('Connect')
-            #self.disconnect_btn_press()
-
-    def connect_btn_press(self):
-        pass
-
-    def disconnect_btn_press(self):
-        pass
 
     def _update_footer_info_loop(self):
         self.footer_start_time = time.time()

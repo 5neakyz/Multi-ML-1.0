@@ -83,12 +83,12 @@ class MenuBar(tk.Menu):
         else:
             (self.parent.selected_comports.append(port))
         self.parent.selected_comports_str.set(self.parent.selected_comports)
-        self.master.footer_bar.set_selected_ports(self.parent.selected_comports)
+        self.master.connect_bar.set_selected_ports(self.parent.selected_comports)
 
     def clear_selected_ports(self):
         self.parent.selected_comports = []
         self.parent.selected_comports_str.set(self.parent.selected_comports)
-        self.parent.footer_bar.set_selected_ports(self.parent.selected_comports)
+        self.parent.connect_bar.set_selected_ports(self.parent.selected_comports)
 
     def refresh_port(self):
         self.raw_comports = serial.tools.list_ports.comports() # comports on pc

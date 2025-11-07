@@ -14,13 +14,16 @@ import concurrent.futures
 
 #my classes
 from device import Device
-from gui.notebook_handler import NotebookHandler
 from stager import Stager
+
 from utils.pb_data import Pb_data
+
+from gui.notebook_handler import NotebookHandler
 from gui.help_menu import HelpMenu
 from gui.menu_bar import MenuBar
 from gui.footer import Footer
-from gui.option_selection import Option_Selection
+from gui.option_selection import OptionSelection
+from gui.connect_bar import ConnectBar
 #247F4C
 
 logger = logging.getLogger(__name__)
@@ -39,8 +42,9 @@ class Beryllium(ctk.CTk):
         self.option_add("*tearOff", False) # This is always a good idea
         icon_path = self.resource_path("../assests/MultiUnits.ico")
         self.iconbitmap(icon_path)
-        #ctk.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
+        ctk.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
         ctk.set_default_color_theme("src/themes/lavender.json") 
+        self.configure(fg_color="#ff8080")
         self.protocol("WM_DELETE_WINDOW",self.close_window)
 
 
@@ -59,11 +63,14 @@ class Beryllium(ctk.CTk):
 # Menu Bar
         self.menu_bar = MenuBar(self)
         self.config(menu=self.menu_bar)
+# connect bar
+        self.connect_bar = ConnectBar(self)
+        self.connect_bar.pack(fill="x",side="top")
 # Footer Info Bar
         self.footer_bar = Footer(self)
         self.footer_bar.pack(fill="x",side="bottom")
 # option selection
-        self.option_selection = Option_Selection(self,height=60)
+        self.option_selection = OptionSelection(self,height=80)
         self.option_selection.pack()
 
 # Main
