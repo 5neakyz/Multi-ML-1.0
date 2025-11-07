@@ -49,6 +49,7 @@ class MenuBar(tk.Menu):
         for port in self.comports:
             self.menu_ports.add_command(label=f'{port}',command=lambda port = port: threading.Thread(daemon=True,target=self.selected_port,args=(f'{port}',)).start())
         self.menu_ports.add_command(label="resfresh",command=lambda: threading.Thread(daemon=True,target=self.refresh_port).start())
+        self.menu_ports.add_command(label="disconnect all",command=lambda: threading.Thread(daemon=True,target=self.clear_selected_ports).start())
 
 
     def close_window(self):
@@ -82,9 +83,12 @@ class MenuBar(tk.Menu):
         else:
             (self.parent.selected_comports.append(port))
         self.parent.selected_comports_str.set(self.parent.selected_comports)
+        self.master.footer_bar.set_selected_ports(self.parent.selected_comports)
 
     def clear_selected_ports(self):
-        pass
+        self.parent.selected_comports = []
+        self.parent.selected_comports_str.set(self.parent.selected_comports)
+        self.parent.footer_bar.set_selected_ports(self.parent.selected_comports)
 
     def refresh_port(self):
         self.raw_comports = serial.tools.list_ports.comports() # comports on pc

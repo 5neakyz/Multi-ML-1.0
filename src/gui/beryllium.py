@@ -20,6 +20,7 @@ from utils.pb_data import Pb_data
 from gui.help_menu import HelpMenu
 from gui.menu_bar import MenuBar
 from gui.footer import Footer
+from gui.option_selection import Option_Selection
 #247F4C
 
 logger = logging.getLogger(__name__)
@@ -38,10 +39,8 @@ class Beryllium(ctk.CTk):
         self.option_add("*tearOff", False) # This is always a good idea
         icon_path = self.resource_path("../assests/MultiUnits.ico")
         self.iconbitmap(icon_path)
-        # s = ttk.Style()
-        # s.configure('red.TFrame', background='red')#2B2B2B
-        # s.configure('green.TFrame',background="green")
-        # s.configure('blue.TFrame',background="blue")
+        #ctk.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
+        ctk.set_default_color_theme("src/themes/lavender.json") 
         self.protocol("WM_DELETE_WINDOW",self.close_window)
 
 
@@ -63,77 +62,12 @@ class Beryllium(ctk.CTk):
 # Footer Info Bar
         self.footer_bar = Footer(self)
         self.footer_bar.pack(fill="x",side="bottom")
-
-# Side bar
-
-        self.side_bar = ctk.CTkFrame(self)
-        self.side_bar.pack(fill="y",side="left")
-        #create widgets
-        self.side_bar_run_btn  = ctk.CTkButton(self.side_bar,state='disable',text="Run",command=lambda: threading.Thread(daemon=True,target=self.run_btn_press).start())
-        self.side_bar_connect_btn = ctk.CTkButton(self.side_bar,textvariable=self.connect_btn_text_str,command=lambda: threading.Thread(daemon=True,target=self.connect_disconnect_btn).start())
-        self.side_bar_selected_devices_frame= ctk.CTkFrame(self.side_bar)
-        self.side_bar_selected_devices_placeholder = ctk.CTkLabel(self.side_bar_selected_devices_frame,textvariable=self.selected_comports_str,wraplength=55)
-        #functions on click listbox
-
-        #create grid
-        self.columnconfigure(1,weight=1)
-        self.rowconfigure((1,2,3,4,5,6,7,8,9),weight=0)
-
-        #place widgets
-        self.side_bar_run_btn.grid(row=1,column=1,sticky="new",padx=20, pady=(20, 0))
-        self.side_bar_connect_btn.grid(row=2,column=1,sticky="new",padx=20, pady=(20, 0))
-
-        self.side_bar_selected_devices_frame.grid(row=5,column=1,sticky="new",padx=20, pady=(20, 0))
-        self.side_bar_selected_devices_placeholder.pack(padx=20,pady=20)
+# option selection
+        self.option_selection = Option_Selection(self,height=60)
+        self.option_selection.pack()
 
 # Main
 
-    # check buttons
-        self.check_buttons = ctk.CTkFrame(self)
-        self.check_buttons.pack(fill="both")
-
-        self.check_buttons.columnconfigure((1,2,3),weight=0)
-        self.check_buttons.rowconfigure((1),weight=1)
-
-        #check options values
-        self.check_push_pers = ctk.IntVar()
-        self.check_push_firm = ctk.IntVar()
-        self.check_push_BLE = ctk.IntVar()
-
-        self.check_3=ctk.CTkCheckBox(self.check_buttons, text="Push Firmware",variable=self.check_push_firm).grid(row=1,column=1,padx=1,pady=1,sticky="w")
-        self.check_2=ctk.CTkCheckBox(self.check_buttons, text="Push Personality",variable=self.check_push_pers).grid(row=1,column=2,padx=1,pady=1,sticky="w")
-        self.check_4=ctk.CTkCheckBox(self.check_buttons, text="Push BLE",variable=self.check_push_BLE).grid(row=1,column=3,padx=1,pady=1,sticky="w")
-
-    # file selection 
-        self.file_selection = ctk.CTkFrame(self)
-        self.file_selection.pack(fill="both")
-        #create grid on frame
-        self.file_selection.columnconfigure((1,2),weight=0)
-        self.file_selection.rowconfigure((1,2,3),weight=0)        
-
-        #vars
-        self.firmware_path = None
-        self.personality_path = None
-        self.ble_path = None
-        self.firmware_path_str = ctk.StringVar(value=self.firmware_path)
-        self.personality_path_str = ctk.StringVar(value=self.personality_path)
-        self.ble_path_str = ctk.StringVar(value=self.ble_path)
-
-        #create widgets
-        self.select_firmware_btn  = ctk.CTkButton(self.file_selection,text="Firmware",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("firm",)).start())
-        self.select_personality_btn  = ctk.CTkButton(self.file_selection,text="Personality",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("pers",)).start())
-        self.select_ble_btn  = ctk.CTkButton(self.file_selection,text="BLE",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("ble",)).start())
-        self.firmware_label = ctk.CTkLabel(self.file_selection,textvariable=self.firmware_path_str)
-        self.personality_label = ctk.CTkLabel(self.file_selection,textvariable=self.personality_path_str)
-        self.ble_label = ctk.CTkLabel(self.file_selection,textvariable=self.ble_path_str)
-
-        #place widgets
-        self.select_firmware_btn.grid(row=1,column=1,padx=2,pady=2)
-        self.select_personality_btn.grid(row=2,column=1,padx=2,pady=2)
-        self.select_ble_btn.grid(row=3,column=1,padx=2,pady=2)
-        self.firmware_label.grid(row=1,column=2,padx=2,pady=2,sticky="w")
-        self.personality_label.grid(row=2,column=2,padx=2,pady=2,sticky="w")
-        self.ble_label.grid(row=3,column=2,padx=2,pady=2,sticky="w")
     #display tabs
         self.tab_view = ctk.CTkTabview(self)
         self.tab_view.pack(fill="both",expand=True,padx=5,pady=5)
@@ -162,7 +96,7 @@ class Beryllium(ctk.CTk):
 
     def run_btn_press(self):
         #button setup
-        self.side_bar_run_btn.configure(state="disable")
+        self.side_bar_run_btn.configure(state="disabled")
         #footer loop / info setup
         self.footer_bar.start_update_info_loop()
         #stager setup
@@ -260,19 +194,6 @@ class Beryllium(ctk.CTk):
         for frame in frames:
             for widgets in frame.winfo_children():
                 widgets.destroy()
-
-    def get_path(self,type):
-        path = fd.askopenfilename()
-        head,tail = os.path.split(path)
-        if type == "firm":
-            self.firmware_path = path
-            self.firmware_path_str.set(tail)
-        if type == "pers":
-            self.personality_path = path
-            self.personality_path_str.set(tail)
-        if type == "ble":
-            self.ble_path = path
-            self.ble_path_str.set(tail)
         
     def resource_path(self,relative_path) -> str:
         """ Get absolute path to resource, works for dev and for PyInstaller """
