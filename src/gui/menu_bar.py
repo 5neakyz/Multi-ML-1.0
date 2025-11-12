@@ -82,8 +82,9 @@ class MenuBar(tk.Menu):
             (self.parent.selected_comports.remove(port))
         else:
             (self.parent.selected_comports.append(port))
+        
         self.parent.selected_comports_str.set(self.parent.selected_comports)
-        self.master.connect_bar.set_selected_ports(self.parent.selected_comports)
+        self.parent.connect_bar.set_selected_ports(self.parent.selected_comports)
 
     def clear_selected_ports(self):
         self.parent.selected_comports = []

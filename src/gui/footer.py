@@ -85,9 +85,9 @@ class Footer(ctk.CTkFrame):
         if self.check_push_BLE.get():
             file_size += os.stat(self.ble_path).st_size
 
-        self.progress_bar_object.total = file_size * len(self.parent.devices)
+        self.parent.progress_bar_object.total = file_size * len(self.parent.devices)
         #gui setup
-        self.current_progress = f'{self.progress_bar_object.progress} / {self.progress_bar_object.total}'
+        self.current_progress = f'{self.parent.progress_bar_object.progress} / {self.parent.progress_bar_object.total}'
         self.current_progress_str.set(self.current_progress)
 
     def set_selected_ports(self,ports):

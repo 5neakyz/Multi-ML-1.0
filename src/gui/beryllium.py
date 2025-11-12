@@ -44,7 +44,7 @@ class Beryllium(ctk.CTk):
         self.iconbitmap(icon_path)
         ctk.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
         ctk.set_default_color_theme("src/themes/lavender.json") 
-        self.configure(fg_color="#ff8080")
+        self.configure(fg_color="gray17")
         self.protocol("WM_DELETE_WINDOW",self.close_window)
 
 
@@ -101,93 +101,6 @@ class Beryllium(ctk.CTk):
         self.notebook_Handler = NotebookHandler(labels,self.devices)
         self.notebook_Handler.start_handler()
 
-    def run_btn_press(self):
-        #button setup
-        self.side_bar_run_btn.configure(state="disabled")
-        #footer loop / info setup
-        self.footer_bar.start_update_info_loop()
-        #stager setup
-        stager_thread = Stager(self.devices)
-        #tasks(pers , firm , BLE)
-        stager_thread.tasks  = [self.check_push_firm.get(),self.check_push_pers.get(),self.check_push_BLE.get()]
-        stager_thread.progress_bar_object = self.progress_bar_object
-        stager_thread.firmware_path = self.firmware_path
-        stager_thread.personality_path = self.personality_path
-        stager_thread.BLE_path = self.ble_path
-        # start stager
-        results = stager_thread.start()
-        logger.info(results)
-        #self.display_results(self.stager_results_frame,results,warplen=400,align="left")
-        self.info_running = False
-        self.side_bar_run_btn.configure(state="enable")
-  
-    def connect_disconnect_btn(self):
-        if self.connect_btn_text_str.get() == 'Connect':
-            self.connect_btn_text_str.set('Disconnect')
-            self.connect_btn_press()
-        else:
-            self.connect_btn_text_str.set('Connect')
-            self.disconnect_btn_press()
-
-    def connect_btn_press(self):
-        self.progress_bar_object.total = 100
-        self.progress_bar_object.add_to_progress(10)
-        print(self.progress_bar_object.perc_current_progress())
-        self.footer_bar.start_update_info_loop()
-
-        time.sleep(2)
-
-        self.progress_bar_object.add_to_progress(10)
-
-        # self.side_bar_connect_btn.configure(state='disable')
-        # logger.info(f'Connecting : {self.selected_comports}')
-        # #change frame text 
-        # self.side_bar_selected_devices_frame.configure(text="Connecting")
-        # #remove all in selected devices frame
-        # self.clear_child_in_frame(self.side_bar_selected_devices_frame)
-        # #ensures no duplicates of already existing objects, has no function on first use
-        # temp_devices_list = []
-        # for device in self.devices:
-        #     temp_devices_list.append(device.serial_port_name)
-        # #creates device objects for devices that dont already exist
-        # for device in self.selected_comports:
-        #     if device not in temp_devices_list:
-        #         self.devices.append(Device(device))
-        # #create threadpool for all devices threadpool(function , devices)
-        # results = self.create_threadpool(self.is_connection_live,self.devices)
-        # #display results
-        # self.display_results(self.side_bar_selected_devices_frame,results)
-
-        # #insert logic for buttons
-        # if all(result[1] for result in results):
-        #     self.side_bar_run_btn.configure(state='enable')
-
-        # #reset frame text
-        # self.side_bar_selected_devices_frame.configure(text="Selected Devices")
-        # self.side_bar_connect_btn.configure(state='enable')
-        # #notebook
-        # self.populate_notebook()
-
-    def disconnect_btn_press(self):
-        self.clear_child_in_frame(self.side_bar_selected_devices_frame)
-        self.side_bar_run_btn.configure(state='disable')
-        # safely disconnect current units
-        for device in self.devices:
-            device.listener.interrupt()
-            device.disconnect()
-            logger.info(f'{device.serial_port_name} TEXT BOX UPDATE READ {device.listener.needs_interrupt,device.serial_connection}')
-        if self.notebook_Handler:
-            self.notebook_Handler.interrupt()
-        #resets all comport variables and re-searches for any new comports
-        self.raw_comports = serial.tools.list_ports.comports() # comports on pc
-        self.comports = self.get_comport_names() #comport names
-        self.list_box_items.set(self.comports)
-        self.devices = []
-        #
-        self.clear_child_in_frame(self.tab_view)
-        #needs placeholder
-        self.side_bar_selected_devices_placeholder = ctk.CTkLabel(self.side_bar_selected_devices_frame,textvariable=self.selected_comports_str,wraplength=55)
-        self.side_bar_selected_devices_placeholder.pack(padx=20,pady=20)
 
     def create_threadpool(self,function,items:list) ->list:
         results = []
@@ -221,6 +134,7 @@ class Beryllium(ctk.CTk):
     def is_connection_live(self,unit):
         return unit.serial_port_name,unit.is_alive()
     
+    #used by menu bar
     def send_commands(self,commands):
         for device in self.devices:
             device.write_commands(commands)

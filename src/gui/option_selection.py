@@ -13,15 +13,14 @@ class OptionSelection(ctk.CTkScrollableFrame):
         super().__init__(master, **kwargs)
         self.master = master
         self.pack(fill="both")
-
+        self.configure(border_width=1)
         # bug in custom tkinter that scroll bar is 200 by defualt
+        self._scrollbar.configure(height=0)
+        #scroll wheel
         self.bind('<Enter>', self._bound_to_mousewheel)
         self.bind('<Leave>', self._unbound_to_mousewheel)
-        self._scrollbar.configure(height=0)
-        
         self.columnconfigure((1,2,3),weight=0)
         self.rowconfigure((1,2,3,4,5,6),weight=1)
-
         #check options vars
         self.check_push_pers = ctk.IntVar()
         self.check_push_firm = ctk.IntVar()
@@ -43,7 +42,6 @@ class OptionSelection(ctk.CTkScrollableFrame):
         self.firmware_path_str = ctk.StringVar(value=self.firmware_path)
         self.personality_path_str = ctk.StringVar(value=self.personality_path)
         self.ble_path_str = ctk.StringVar(value=self.ble_path)
-
         #create widgets
         self.select_firmware_btn  = ctk.CTkButton(self,text="Firmware",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("firm",)).start())
         self.select_personality_btn  = ctk.CTkButton(self,text="Personality",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("pers",)).start())
@@ -51,7 +49,9 @@ class OptionSelection(ctk.CTkScrollableFrame):
         self.firmware_label = ctk.CTkLabel(self,textvariable=self.firmware_path_str)
         self.personality_label = ctk.CTkLabel(self,textvariable=self.personality_path_str)
         self.ble_label = ctk.CTkLabel(self,textvariable=self.ble_path_str)
-
+        #bind for all child widgets (otherwise scroll does not work while mouse it over a widget in a frame)
+        for widget in self.winfo_children():
+            widget.bindtags((widget,self,".","all"))
         #place widgets
         # row 1 
         self.check_1.grid(row=0,column=0,padx=1,pady=1,sticky="w")
