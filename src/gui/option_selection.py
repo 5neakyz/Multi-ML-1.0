@@ -78,9 +78,9 @@ class OptionSelection(ctk.CTkScrollableFrame):
 
     def _on_mousewheel(self, event):
         if int(-1*(event.delta/120)) > 0: # +1 scroll up
-            self._parent_canvas.yview("scroll",5, "units")
+            self._parent_canvas.yview("scroll",20, "units")
         else:
-            self._parent_canvas.yview("scroll",-5, "units")
+            self._parent_canvas.yview("scroll",-20, "units")
 
     def get_path(self,type):
         path = fd.askopenfilename()

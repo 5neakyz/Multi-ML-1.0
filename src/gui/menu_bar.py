@@ -19,23 +19,27 @@ class MenuBar(tk.Menu):
         self.raw_comports = serial.tools.list_ports.comports() # comports on pc
         self.comports = self.get_comport_names() #comport names
 
-        self.menu_settings = tk.Menu(self.menu_bar, tearoff=0)
+        self.commands = tk.Menu(self.menu_bar, tearoff=0)
         self.menu_file = tk.Menu(self.menu_bar)
         self.menu_help = tk.Menu(self.menu_bar)
         self.menu_ports= tk.Menu(self.menu_bar)
+        self.settings= tk.Menu(self.menu_bar)
 
         self.populate_port_menu()
         #self.menu_bar.add_cascade(menu=self.menu_file, label='File')
-        self.menu_bar.add_cascade(menu=self.menu_settings, label='Settings')
-        self.menu_bar.add_cascade(menu=self.menu_ports, label='Ports')
+        self.menu_bar.add_cascade(menu=self.settings, label='Settings')
         self.menu_bar.add_cascade(menu=self.menu_help, label='Help')
+        self.menu_bar.add_cascade(menu=self.menu_ports, label='Ports')
+        self.menu_bar.add_cascade(menu=self.commands, label='Commands')
         
-        self.menu_settings.add_command(label="9HY",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","h","y"],)).start())
-        self.menu_settings.add_command(label="9IY",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","i","y"],)).start())
-        self.menu_settings.add_command(label="9JY",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","j","y"],)).start())
-        self.menu_settings.add_command(label="9KA",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","k","a"],)).start())
-        self.menu_settings.add_command(label="9KB",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","k","b"],)).start())
-        self.menu_settings.add_command(label="9L",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","l"],)).start())
+        self.settings.add_command(label="90")
+        #commands
+        self.commands.add_command(label="9HY",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","h","y"],)).start())
+        self.commands.add_command(label="9IY",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","i","y"],)).start())
+        self.commands.add_command(label="9JY",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","j","y"],)).start())
+        self.commands.add_command(label="9KA",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","k","a"],)).start())
+        self.commands.add_command(label="9KB",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","k","b"],)).start())
+        self.commands.add_command(label="9L",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","l"],)).start())
 
         #self.menu_help.add_command(label="Help",command=lambda: HelpMenu(self))
 

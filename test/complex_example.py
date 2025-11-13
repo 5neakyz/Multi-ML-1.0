@@ -14,8 +14,8 @@ class App(customtkinter.CTk):
         self.title("CustomTkinter complex_example.py")
         self.geometry(f"{1100}x{580}")
         customtkinter.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
-        customtkinter.set_default_color_theme("src/themes/CTKtheme_test.json") 
-        self.configure(fg_color="#ff8080")
+        # customtkinter.set_default_color_theme("src/themes/CTKtheme_test.json") 
+        # self.configure(fg_color="#ff8080")
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure((2, 3), weight=0)

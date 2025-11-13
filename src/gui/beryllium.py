@@ -18,12 +18,13 @@ from stager import Stager
 
 from utils.pb_data import Pb_data
 
-from gui.notebook_handler import NotebookHandler
+from display_handler import DisplayHandler
 from gui.help_menu import HelpMenu
 from gui.menu_bar import MenuBar
 from gui.footer import Footer
 from gui.option_selection import OptionSelection
 from gui.connect_bar import ConnectBar
+from gui.display_devices import DisplayDevices
 #247F4C
 
 logger = logging.getLogger(__name__)
@@ -31,14 +32,14 @@ logger = logging.getLogger(__name__)
 class Beryllium(ctk.CTk):
     def __init__(self):
         super().__init__()
-        # configure window
+# configure window
         self.title("ML Multi Stager v2.0.0")
         self.geometry(f"{800}x{600}")
 
         #self.bind('<KeyPress>', self.onKeyPress)
         self.bind('<Double-1>',self.copy_on_double_click)
 
-        #style
+#style
         self.option_add("*tearOff", False) # This is always a good idea
         icon_path = self.resource_path("../assests/MultiUnits.ico")
         self.iconbitmap(icon_path)
@@ -46,62 +47,39 @@ class Beryllium(ctk.CTk):
         ctk.set_default_color_theme("src/themes/lavender.json") 
         self.configure(fg_color="gray17")
         self.protocol("WM_DELETE_WINDOW",self.close_window)
+        ctk.set_widget_scaling(1)
 
-
-        ##vars
+##vars
         self.selected_comports = [] # user selection
         self.selected_comports_str = ctk.StringVar(value=self.selected_comports) # string list
         self.devices = []
-        self.notebook_Handler = None
-        self.connect_btn_text_str = ctk.StringVar(value='Connect')
+
+        self.display_handler = None
+
         self.help_doc = "../assests/doc.html"
 
         self.progress_bar_object = Pb_data()
         
 #frames / gui setup
-
+ 
 # Menu Bar
         self.menu_bar = MenuBar(self)
         self.config(menu=self.menu_bar)
-# connect bar
+# Connect bar
         self.connect_bar = ConnectBar(self)
         self.connect_bar.pack(fill="x",side="top")
 # Footer Info Bar
         self.footer_bar = Footer(self)
         self.footer_bar.pack(fill="x",side="bottom")
-# option selection
+# Option Selection
         self.option_selection = OptionSelection(self,height=80)
         self.option_selection.pack()
-
-# Main
-
-    #display tabs
-        self.tab_view = ctk.CTkTabview(self)
-        self.tab_view.pack(fill="both",expand=True,padx=5,pady=5)
-
-        #self.new_pad = ctk.CTkFrame(self.tab_view)
-
-        self.tab_view.add("Tab 1")
-
+# Main display
+        self.display_devices =DisplayDevices(self)
+        self.display_devices.pack(expand=True,fill="both")
 
         self.mainloop()
-
-    def populate_notebook(self):
-        self.clear_child_in_frame(self.tab_view)
-        if self.notebook_Handler:
-            self.notebook_Handler.interrupt()
-        labels = []
-        for device in self.devices:
-            pad = ctk.CTkFrame(self.tab_view)
-            self.tab_view.add(pad,text=device.serial_port_name)
-            label = tk.Text(pad)
-            label.pack(expand=True,fill="both")
-            labels.append(label)
-
-        self.notebook_Handler = NotebookHandler(labels,self.devices)
-        self.notebook_Handler.start_handler()
-
-
+# funcs
     def create_threadpool(self,function,items:list) ->list:
         results = []
         with concurrent.futures.ThreadPoolExecutor() as executor:# parallelism 
@@ -130,7 +108,7 @@ class Beryllium(ctk.CTk):
             self.clipboard_append(field_value)  # append new value to clipbaord
         except Exception:
             pass
-
+    
     def is_connection_live(self,unit):
         return unit.serial_port_name,unit.is_alive()
     
@@ -138,15 +116,15 @@ class Beryllium(ctk.CTk):
     def send_commands(self,commands):
         for device in self.devices:
             device.write_commands(commands)
-
+    # kill everything on close
     def close_window(self):
         for device in self.devices:
             try:
                 device.listener.interrupt()
                 device.disconnect()
             except Exception as e: print(e)
-        if self.notebook_Handler:
-            self.notebook_Handler.interrupt()
+        if self.display_handler:
+            self.display_handler.interrupt()
         self.info_interrupt = True
         self.devices.clear()
         self.destroy()

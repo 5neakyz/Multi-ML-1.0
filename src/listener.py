@@ -47,6 +47,7 @@ class Listener():
                     self.buffer_txt = ""
                     split = line.split(b'\x1b')
                     line = split[-1]
-            stripped = line.replace(b'\r',b' ').replace(b'\x1b',b'').replace(b'[2J',b'').replace(b':',b': ')
+            #stripped = line.replace(b'\r',b' ').replace(b'\x1b',b'').replace(b'[2J',b'').replace(b':',b': ') # 
+            stripped = line.replace(b'\r',b' ').replace(b'\x1b',b'').replace(b'[2J',b'').replace(b':',b': ').replace(b'\t',b'  ')
             if stripped:
                 self.buffer_txt += stripped.decode("utf-8",errors='replace')

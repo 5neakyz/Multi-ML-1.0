@@ -14,7 +14,7 @@ import concurrent.futures
 
 #my classes
 from ..device import Device
-from gui.notebook_handler import NotebookHandler
+from display_handler import NotebookHandler
 from stager import Stager
 from utils.pb_data import Pb_data
 from gui.help_menu import HelpMenu

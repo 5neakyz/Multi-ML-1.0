@@ -28,13 +28,13 @@ class ConnectBar(ctk.CTkFrame):
         self.pack(fill="x",side="bottom",padx=1,pady=1)
         #buttons and connected frame
 
-        self.side_bar_run_btn  = ctk.CTkButton(self,state='disabled',text="Run",height=26,command=lambda: threading.Thread(daemon=True,target=self.place_holder_function_for_test).start())
-        self.side_bar_run_btn.pack(fill="x",side="right",padx=3,pady=1)
-        self.side_bar_connect_btn = ctk.CTkButton(self,height=26,textvariable=self.connect_btn_text_str,command=lambda: threading.Thread(daemon=True,target=self.connect_disconnect_btn).start())
-        self.side_bar_connect_btn.pack(fill="x",side="right",padx=10,pady=1)
+        self.run_btn  = ctk.CTkButton(self,state='disabled',text="Run",height=26,command=lambda: threading.Thread(daemon=True,target=self.place_holder_function_for_test).start())
+        self.run_btn.pack(fill="x",side="right",padx=3,pady=1)
+        self.connect_btn = ctk.CTkButton(self,height=26,textvariable=self.connect_btn_text_str,command=lambda: threading.Thread(daemon=True,target=self.connect_disconnect_btn).start())
+        self.connect_btn.pack(fill="x",side="right",padx=10,pady=1)
         self.connect_selection_frame = ctk.CTkFrame(self,fg_color="gray17")
-        self.side_bar_selected_devices_label =ctk.CTkLabel(self,text="Selected:").pack(side="left",padx=10,pady=1)
-        self.side_bar_selected_devices_placeholder = ctk.CTkLabel(self.connect_selection_frame,textvariable=self.selected_comports_str).pack(side="left",padx=10,pady=1)
+        self.selected_devices_label =ctk.CTkLabel(self,text="Selected:").pack(side="left",padx=10,pady=1)
+        self.selected_devices_placeholder = ctk.CTkLabel(self.connect_selection_frame,textvariable=self.selected_comports_str).pack(side="left",padx=10,pady=1)
         self.connect_selection_frame.pack(fill="x",side="left",padx=3,pady=3)
 
     def place_holder_function_for_test(self):
@@ -56,10 +56,13 @@ class ConnectBar(ctk.CTkFrame):
         # self.parent.progress_bar_object.add_to_progress(10)
         # self.parent.footer_bar.start_update_info_loop()
         # self.parent.progress_bar_object.add_to_progress(10)
-        logger.info(f'Connecting : {self.selected_comports}')
-        self.side_bar_connect_btn.configure(state='disabled')
-        #create list of objects
         print(self.selected_comports)
+        if not self.selected_comports:
+            return
+
+        logger.info(f'Connecting : {self.selected_comports}')
+        self.connect_btn.configure(state='disabled')
+        #create list of objects
         temp_devices_list = []
         for device in self.parent.devices:
             temp_devices_list.append(device.serial_port_name)
@@ -69,19 +72,19 @@ class ConnectBar(ctk.CTkFrame):
                 self.parent.devices.append(Device(device))
         #create threadpool for all devices threadpool(function , devices)
         results = self.create_threadpool(self.parent.is_connection_live,self.parent.devices)
-        print(results)
         #display results
         self.display_results(self.connect_selection_frame,results)
         #insert logic for run button
         if all(result[1] for result in results):
-            self.side_bar_run_btn.configure(state='enable')
+            self.run_btn.configure(state='normal')
         # re-enable connect button
-        self.side_bar_connect_btn.configure(state='enable')
+        self.connect_btn.configure(state='normal')
+        self.master.display_devices.populate_notebook()
 
     def disconnect_btn_press(self):
         self.clear_child_in_frame(self.connect_selection_frame)
-        self.side_bar_run_btn.configure(state='disabled')
-        self.side_bar_selected_devices_placeholder = ctk.CTkLabel(self.connect_selection_frame,textvariable=self.selected_comports_str).pack(side="left",padx=10,pady=1)
+        self.run_btn.configure(state='disabled',)
+        self.selected_devices_placeholder = ctk.CTkLabel(self.connect_selection_frame,textvariable=self.selected_comports_str).pack(side="left",padx=10,pady=1)
         # safely disconnect current units
         for device in self.parent.devices:
             device.listener.interrupt()
@@ -94,7 +97,7 @@ class ConnectBar(ctk.CTkFrame):
     def set_selected_ports(self,ports):
         self.selected_comports = ports
         self.selected_comports_str.set(self.selected_comports)
-        self.side_bar_selected_devices_label
+        self.selected_devices_label
 
     def display_results(self,parent_label,results,align="left"):
     # Result[0] (string) = COM PORT
