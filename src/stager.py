@@ -20,7 +20,7 @@ class Stager():
         '''
         self.progress_bar_object = progress_bar_object
     
-    def stage(self,device:object):
+    def _stage(self,device:object):
         device.progress_bar_object = self.progress_bar_object   
         '''
         if we are pushing either personality or firmware eras config
@@ -51,7 +51,7 @@ class Stager():
     def start(self):
         results = []
         with concurrent.futures.ThreadPoolExecutor() as executor:# parallelism 
-            tasks = [executor.submit(self.stage,device) for device in self.devices]
+            tasks = [executor.submit(self._stage,device) for device in self.devices]
             for x in concurrent.futures.as_completed(tasks):
                 results.append(x.result())
         return results

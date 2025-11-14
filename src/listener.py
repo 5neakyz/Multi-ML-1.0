@@ -30,9 +30,9 @@ class Listener():
 
     def start_listening(self):
         logger.info(f'{self.device.serial_port_name}: Starting Listener')
-        threading.Thread(daemon=True,target=self.listening).start()
+        threading.Thread(daemon=True,target=self._listening).start()
 
-    def listening(self):
+    def _listening(self):
         self.is_running = True
         logger.info(f'{self.device.serial_port_name}: Thread Started, Listening')
 

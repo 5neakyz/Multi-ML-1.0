@@ -18,7 +18,6 @@ from stager import Stager
 
 from utils.pb_data import Pb_data
 
-from display_handler import DisplayHandler
 from gui.help_menu import HelpMenu
 from gui.menu_bar import MenuBar
 from gui.footer import Footer
@@ -41,10 +40,10 @@ class Beryllium(ctk.CTk):
 
 #style
         self.option_add("*tearOff", False) # This is always a good idea
-        icon_path = self.resource_path("../assests/MultiUnits.ico")
-        self.iconbitmap(icon_path)
-        ctk.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
-        ctk.set_default_color_theme("src/themes/lavender.json") 
+        # icon_path = self.resource_path("../assests/MultiUnits.ico")
+        # self.iconbitmap(icon_path)
+        # ctk.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
+        # ctk.set_default_color_theme(self.resource_path("../themes/lavender.json"))
         self.configure(fg_color="gray17")
         self.protocol("WM_DELETE_WINDOW",self.close_window)
         ctk.set_widget_scaling(1)

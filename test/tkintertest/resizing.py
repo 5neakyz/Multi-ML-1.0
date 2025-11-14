@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import customtkinter as ctk
 
-class simpleapp_tk(ctk.CTkScrollableFrame):
+class simpleapp_tk(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.parent = master
