@@ -52,10 +52,7 @@ class ConnectBar(ctk.CTkFrame):
             self.disconnect_btn_press()
 
     def connect_btn_press(self):
-        # self.parent.progress_bar_object.total = 100
-        # self.parent.progress_bar_object.add_to_progress(10)
-        # self.parent.footer_bar.start_update_info_loop()
-        # self.parent.progress_bar_object.add_to_progress(10)
+
         print(self.selected_comports)
         if not self.selected_comports:
             return
@@ -79,7 +76,7 @@ class ConnectBar(ctk.CTkFrame):
             self.run_btn.configure(state='normal')
         # re-enable connect button
         self.connect_btn.configure(state='normal')
-        self.master.display_devices.populate_notebook()
+        self.master.display_devices.populate_display_frame()
 
     def disconnect_btn_press(self):
         self.clear_child_in_frame(self.connect_selection_frame)

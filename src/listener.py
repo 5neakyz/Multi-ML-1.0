@@ -14,17 +14,21 @@ class Listener():
         self.download_temp_interrupt = False
 
     def continue_read(self):
+        '''Resumes reading from serial port'''
         logger.info(f'{self.device.serial_port_name}: continuing Listener')
         self.download_temp_interrupt = False        
 
     def pause_read(self):
+        '''Pauses reading from serial port, while keeping my main loop alive'''
         logger.info(f'{self.device.serial_port_name}: Pausing Listener')
         self.download_temp_interrupt = True  
 
     def get_buffer(self):
+        '''Gets formated "stripped" string of current buffer text. Buffer text is cleared on b\ x1b (ASCII Escape char) response from unit'''
         return self.buffer_txt
     
     def interrupt(self):
+        '''kills main loop for listener'''
         logger.info(f'{self.device.serial_port_name}: Interrupting Listener')
         self.needs_interrupt = True
 

@@ -10,7 +10,14 @@ import math
 
 logger = logging.getLogger(__name__)
 
-class DisplayDevices(ctk.CTkScrollableFrame):
+class FixedDeviceDisplay(ctk.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+        # vars
+        self.master = master
+
+
+class ScrollableDeviceDisplay(ctk.CTkScrollableFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.master = master
@@ -19,24 +26,27 @@ class DisplayDevices(ctk.CTkScrollableFrame):
         # bug in custom tkinter that scroll bar is 200 by defualt
         self._scrollbar.configure(height=1)
         #scroll wheel
-        self.bind('<Enter>', self._bound_to_mousewheel)
-        self.bind('<Leave>', self._unbound_to_mousewheel)
+        # self.bind('<Enter>', self._bound_to_mousewheel)
+        # self.bind('<Leave>', self._unbound_to_mousewheel)
+        self._parent_canvas.bind('<Enter>', self._bound_to_mousewheel)
+        self._parent_canvas.bind('<Leave>', self._unbound_to_mousewheel)
         self.grid_columnconfigure((0,1),minsize=200,weight=1)
         self.grid_rowconfigure(0,minsize=200,weight=1)
 
-    def populate_notebook(self):
+
+    def populate_display_frame(self):
         self.clear_child_in_frame(self)
         if self.master.display_handler:
             self.master.display_handler.interrupt()
         text_boxes = []
+
         for device in self.master.devices:
-            text_box = ctk.CTkTextbox(self,border_width=1,height=300)
+            text_box = ctk.CTkTextbox(self,border_width=1,height=400)
             text_box._x_scrollbar.configure(height=1)
             #text_box.pack(expand=True,fill="both")
             text_boxes.append(text_box)
 
         amount = math.ceil(len(self.master.devices) / 2)
-        print(amount)
         #how many rows
         rows = []
         for x in range (amount):
@@ -52,8 +62,6 @@ class DisplayDevices(ctk.CTkScrollableFrame):
             if y > 1:
                 y = 0
                 x += 1
-            print(f'Y:{y} X:{x}')
-
 
         self.master.display_handler = DisplayHandler(text_boxes,self.master.devices)
         self.master.display_handler.start_handler()
@@ -64,9 +72,11 @@ class DisplayDevices(ctk.CTkScrollableFrame):
                 widgets.destroy()    
 
     def _bound_to_mousewheel(self, event):
+        print("BOUND MAIN")
         self.bind_all("<MouseWheel>", self._on_mousewheel)
 
     def _unbound_to_mousewheel(self, event):
+        print("UNBOUND MAIN")
         self.unbind_all("<MouseWheel>")
 
     def _on_mousewheel(self, event):
@@ -112,5 +122,5 @@ class DisplayHandler():
 if __name__ == "__main__":
     root = ctk.CTk()
     root.geometry(f"{500}x{200}")
-    DisplayDevices(master=root)
+    ScrollableDeviceDisplay(master=root)
     root.mainloop()

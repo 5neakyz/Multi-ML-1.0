@@ -20,10 +20,11 @@ from utils.pb_data import Pb_data
 
 from gui.help_menu import HelpMenu
 from gui.menu_bar import MenuBar
+from gui.custom_menu_bar import CustomMenuBar
 from gui.footer import Footer
 from gui.option_selection import OptionSelection
 from gui.connect_bar import ConnectBar
-from gui.display_devices import DisplayDevices
+from gui.display_devices import ScrollableDeviceDisplay
 #247F4C
 
 logger = logging.getLogger(__name__)
@@ -42,8 +43,8 @@ class Beryllium(ctk.CTk):
         self.option_add("*tearOff", False) # This is always a good idea
         # icon_path = self.resource_path("../assests/MultiUnits.ico")
         # self.iconbitmap(icon_path)
-        # ctk.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
-        # ctk.set_default_color_theme(self.resource_path("../themes/lavender.json"))
+        ctk.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
+        ctk.set_default_color_theme(self.resource_path("../themes/lavender.json"))
         self.configure(fg_color="gray17")
         self.protocol("WM_DELETE_WINDOW",self.close_window)
         ctk.set_widget_scaling(1)
@@ -62,7 +63,7 @@ class Beryllium(ctk.CTk):
 #frames / gui setup
  
 # Menu Bar
-        self.menu_bar = MenuBar(self)
+        self.menu_bar = CustomMenuBar(self)
         self.config(menu=self.menu_bar)
 # Connect bar
         self.connect_bar = ConnectBar(self)
@@ -74,7 +75,7 @@ class Beryllium(ctk.CTk):
         self.option_selection = OptionSelection(self,height=80)
         self.option_selection.pack()
 # Main display
-        self.display_devices =DisplayDevices(self)
+        self.display_devices =ScrollableDeviceDisplay(self)
         self.display_devices.pack(expand=True,fill="both")
 
         self.mainloop()

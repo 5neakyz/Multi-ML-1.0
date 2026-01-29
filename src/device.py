@@ -2,7 +2,7 @@ import time
 import os
 import logging
 from xmodem import XMODEM
-from utils.serial_port_manager import SerialPortManger
+from serial_port_manager import SerialPortManger
 from listener import Listener
 from utils.calc_sent_bytes import Calc_sent_bytes
 
