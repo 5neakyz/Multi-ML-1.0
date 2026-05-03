@@ -27,6 +27,8 @@ from gui.connect_bar import ConnectBar
 from gui.display_devices import ScrollableDeviceDisplay
 #247F4C
 
+from utils.custom_menu import Menu
+
 logger = logging.getLogger(__name__)
 
 class Beryllium(ctk.CTk):
@@ -63,8 +65,9 @@ class Beryllium(ctk.CTk):
 #frames / gui setup
  
 # Menu Bar
+
         self.menu_bar = CustomMenuBar(self)
-        self.config(menu=self.menu_bar)
+        self.menu_bar.pack(side="top", fill="x")
 # Connect bar
         self.connect_bar = ConnectBar(self)
         self.connect_bar.pack(fill="x",side="top")
@@ -72,11 +75,11 @@ class Beryllium(ctk.CTk):
         self.footer_bar = Footer(self)
         self.footer_bar.pack(fill="x",side="bottom")
 # Option Selection
-        self.option_selection = OptionSelection(self,height=80)
+        self.option_selection = OptionSelection(self,height=120)
         self.option_selection.pack()
 # Main display
-        self.display_devices =ScrollableDeviceDisplay(self)
-        self.display_devices.pack(expand=True,fill="both")
+        # self.display_devices =ScrollableDeviceDisplay(self)
+        # self.display_devices.pack(expand=True,fill="both")
 
         self.mainloop()
 # funcs

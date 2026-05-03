@@ -22,24 +22,31 @@ class CustomMenuBar(ctk.CTkFrame):
         #delete later ????
         self.raw_comports = serial.tools.list_ports.comports() # comports on pc
         self.comports = self.get_comport_names() #comport names
+            
+        self.menu = Menu(self.menu_bar)
 
-        self.menu - Menu(self.menu_bar)
+        self.menu_file = self.menu.menu_bar(text="File", tearoff=0)
+        self.settings= self.menu.menu_bar(text="Settings", tearoff=0)
+        self.menu_help = self.menu.menu_bar(text="Help", tearoff=0)
+        self.commands = self.menu.menu_bar(text="Commands", tearoff=0)
+        self.menu_ports= self.menu.menu_bar(text="Ports", tearoff=0)
+        
+        self.quick_com_1= self.menu.menu_bar(text="esc: Main Menu", tearoff=0)
+        self.quick_com_2= self.menu.menu_bar(text="3: View Config", tearoff=0)
+        self.quick_com_3= self.menu.menu_bar(text="4: Status Screen", tearoff=0)
+        self.quick_com_4= self.menu.menu_bar(text="F: Prod TS", tearoff=0)
+        self.quick_com_5= self.menu.menu_bar(text="G: Sys Info", tearoff=0)
 
-        self.commands = tk.Menu(self.menu_bar, tearoff=0)
-        self.menu_file = tk.Menu(self.menu_bar)
-        self.menu_help = tk.Menu(self.menu_bar)
-        self.menu_ports= tk.Menu(self.menu_bar)
-        self.settings= tk.Menu(self.menu_bar)
-
-        self.populate_port_menu()
-        #self.menu_bar.add_cascade(menu=self.menu_file, label='File')
-        self.menu_bar.add_cascade(menu=self.settings, label='Settings')
-        self.menu_bar.add_cascade(menu=self.menu_help, label='Help')
-        self.menu_bar.add_cascade(menu=self.menu_ports, label='Ports')
-        self.menu_bar.add_cascade(menu=self.commands, label='Commands')
+        # self.populate_port_menu()
         
         self.settings.add_command(label="90")
         #commands
+        # self.menu.menu_bar.add_command(label="esc: Main Menu",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc"],)).start())
+        # self.menu.menu_bar.add_command(label="3: View Config",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","3"],)).start())
+        # self.menu.menu_bar.add_command(label="4: Status Screen",command=lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","4"],)).start())
+        # self.menu.menu_bar.add_command(label="F: Prod TS",command=lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","f"],)).start())
+        # self.menu.menu_bar.add_command(label="G: Sys Info",command=lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","g "],)).start())
+        
         self.commands.add_command(label="9HY",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","h","y"],)).start())
         self.commands.add_command(label="9IY",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","i","y"],)).start())
         self.commands.add_command(label="9JY",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","j","y"],)).start())
@@ -49,11 +56,6 @@ class CustomMenuBar(ctk.CTkFrame):
 
         #self.menu_help.add_command(label="Help",command=lambda: HelpMenu(self))
 
-        #self.menu_bar.add_command(label="esc: Main Menu",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc"],)).start())
-        self.menu_bar.add_command(label="3: View Config",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","3"],)).start())
-        self.menu_bar.add_command(label="4: Status Screen",command=lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","4"],)).start())
-        self.menu_bar.add_command(label="F: Prod TS",command=lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","f"],)).start())
-        self.menu_bar.add_command(label="G: Sys Info",command=lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","g "],)).start())
 
     def populate_port_menu(self):
         for port in self.comports:
