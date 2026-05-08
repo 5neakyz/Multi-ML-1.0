@@ -14,7 +14,7 @@ class MenuBar(tk.Menu):
         tk.Menu.__init__(self, parent)
         self.menu_bar = self
         self.parent = parent
-
+        
         #delete later ????
         self.raw_comports = serial.tools.list_ports.comports() # comports on pc
         self.comports = self.get_comport_names() #comport names
@@ -108,6 +108,6 @@ if __name__ == "__main__":
 
     root = tk.Tk()
     root.geometry(f"{500}x{200}")
-    root.config(menu = MenuBar(root,send_commands))
+    root.config(menu = MenuBar(root))
     root.mainloop()
 

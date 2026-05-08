@@ -25,6 +25,12 @@ class Menu:
         self._menu_widgets.append(menu)
         self.set_appearance_mode()
         return menu.menu
+    
+    def add_button(self, text: str,command, **kwargs) -> ctk.CTkButton:
+        button = ctk.CTkButton(self._menu_bar,command=command,text=text,fg_color="transparent",width=50,height=20,text_color="white")
+        button.pack(side="left")
+        return button
+    
 
     def set_appearance_mode(self, theme_mode: Literal["Light", "Dark"] = None):
         theme = (

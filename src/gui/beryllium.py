@@ -66,6 +66,9 @@ class Beryllium(ctk.CTk):
  
 # Menu Bar
 
+        # self.menu_bar = MenuBar(self)
+        # self.config(menu=self.menu_bar)
+
         self.menu_bar = CustomMenuBar(self)
         self.menu_bar.pack(side="top", fill="x")
 # Connect bar

@@ -31,21 +31,16 @@ class CustomMenuBar(ctk.CTkFrame):
         self.commands = self.menu.menu_bar(text="Commands", tearoff=0)
         self.menu_ports= self.menu.menu_bar(text="Ports", tearoff=0)
         
-        self.quick_com_1= self.menu.menu_bar(text="esc: Main Menu", tearoff=0)
-        self.quick_com_2= self.menu.menu_bar(text="3: View Config", tearoff=0)
-        self.quick_com_3= self.menu.menu_bar(text="4: Status Screen", tearoff=0)
-        self.quick_com_4= self.menu.menu_bar(text="F: Prod TS", tearoff=0)
-        self.quick_com_5= self.menu.menu_bar(text="G: Sys Info", tearoff=0)
-
-        # self.populate_port_menu()
-        
+        # self.populate_port_menu()    
+            
         self.settings.add_command(label="90")
+        
         #commands
-        # self.menu.menu_bar.add_command(label="esc: Main Menu",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc"],)).start())
-        # self.menu.menu_bar.add_command(label="3: View Config",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","3"],)).start())
-        # self.menu.menu_bar.add_command(label="4: Status Screen",command=lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","4"],)).start())
-        # self.menu.menu_bar.add_command(label="F: Prod TS",command=lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","f"],)).start())
-        # self.menu.menu_bar.add_command(label="G: Sys Info",command=lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","g "],)).start())
+        self.menu.add_button(text="esc: Main Menu",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc"],)).start())
+        self.menu.add_button(text="3: View Config",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","3"],)).start())
+        self.menu.add_button(text="4: Status Screen",command=lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","4"],)).start())
+        self.menu.add_button(text="F: Prod TS",command=lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","f"],)).start())
+        self.menu.add_button(text="G: Sys Info",command=lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","g "],)).start())
         
         self.commands.add_command(label="9HY",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","h","y"],)).start())
         self.commands.add_command(label="9IY",command = lambda: threading.Thread(daemon=True,target=parent.send_commands,args=(["esc","9","i","y"],)).start())
@@ -56,13 +51,11 @@ class CustomMenuBar(ctk.CTkFrame):
 
         #self.menu_help.add_command(label="Help",command=lambda: HelpMenu(self))
 
-
     def populate_port_menu(self):
         for port in self.comports:
             self.menu_ports.add_command(label=f'{port}',command=lambda port = port: threading.Thread(daemon=True,target=self.selected_port,args=(f'{port}',)).start())
         self.menu_ports.add_command(label="resfresh",command=lambda: threading.Thread(daemon=True,target=self.refresh_port).start())
         self.menu_ports.add_command(label="disconnect all",command=lambda: threading.Thread(daemon=True,target=self.clear_selected_ports).start())
-
 
     def close_window(self):
         self.destroy()

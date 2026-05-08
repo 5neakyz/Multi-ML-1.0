@@ -13,4 +13,8 @@ file_menu.add_command(label="Open")
 file_menu.add_separator()
 file_menu.add_command(label="Exit", command=root.quit)
 
+menu.add_button()
+
+#test_menu = menu("test")
+
 root.mainloop()
