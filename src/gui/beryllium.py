@@ -43,9 +43,9 @@ class Beryllium(ctk.CTk):
 
 #style
         self.option_add("*tearOff", False) # This is always a good idea
-        # icon_path = self.resource_path("../assests/MultiUnits.ico")
-        # self.iconbitmap(icon_path)
-        ctk.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
+        icon_path = self.resource_path("../assests/mlunitblack.ico")
+        self.iconbitmap(icon_path)
+        ctk.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
         ctk.set_default_color_theme(self.resource_path("../themes/lavender.json"))
         self.configure(fg_color="gray17")
         self.protocol("WM_DELETE_WINDOW",self.close_window)

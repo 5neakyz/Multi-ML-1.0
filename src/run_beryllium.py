@@ -1,6 +1,6 @@
 import logging
 from gui.beryllium import Beryllium
-
+from gui.tungsten_gui import TungstenGui
 if __name__ == "__main__":
     # logger = logging.getLogger(__name__)
     # logger_format = ('%(asctime)s - %(name)s - %(levelname)s - %(message)s')

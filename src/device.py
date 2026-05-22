@@ -50,6 +50,7 @@ class Device(SerialPortManger):
                 except Exception:
                     logger.warning(f'{self.serial_port_name}: Failed Sending Commands')
                     return False
+                time.sleep(0.05)
             return True
         return False
     
@@ -136,12 +137,19 @@ class Device(SerialPortManger):
                 logger.info(f'{self.serial_port_name} Unit replied with Hello')
                 return True
             
+            # some units do now reply with hello, this just checks unit has reset and is back to life after install
+            if "Debug on PORTA" in str(lines):
+                logger.info(f'{self.serial_port_name} Unit back to life after install')
+                return True
+            
+            # this needs to be last so that hello can be checked first after Crtl X is sent
             if "Ctrl X" in str(lines):
                 self.write_commands(chr(24))
                 logger.info(f"{self.serial_port_name} SENDING CTRL X")
                 continue
-            time.sleep(0.5)
             
+            time.sleep(0.5)
+        
         logger.warning(f'{self.serial_port_name}, CHECKER TIMEOUT')
         return False
     

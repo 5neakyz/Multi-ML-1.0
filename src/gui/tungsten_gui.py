@@ -13,8 +13,8 @@ import logging
 import concurrent.futures
 
 #my classes
-from ..device import Device
-from display_handler import NotebookHandler
+from device import Device
+from gui.display_devices import DisplayHandler
 from stager import Stager
 from utils.pb_data import Pb_data
 from gui.help_menu import HelpMenu
@@ -26,7 +26,7 @@ class TungstenGui(tk.Tk):
     def __init__(self):
         super().__init__()
         # configure window
-        self.title("ML Multi Stager v2.1.0")
+        self.title("ML Multi Stager v2.2.0")
         self.geometry(f"{800}x{600}")
 
         #self.bind('<KeyPress>', self.onKeyPress)
@@ -34,11 +34,13 @@ class TungstenGui(tk.Tk):
 
         #style
         self.option_add("*tearOff", False) # This is always a good idea
-        #icon_path = self.resource_path("assests/MultiUnits.ico")
-        #self.iconbitmap(icon_path)
-        style_path = self.resource_path('../assests/Forest-ttk-theme-master/forest-dark.tcl')
-        self.tk.call('source', style_path)
-        ttk.Style().theme_use('forest-dark')
+        icon_path = self.resource_path("../assests/mlunitblack.ico")
+        self.iconbitmap(icon_path)
+        dark_style_path = self.resource_path('../assests/Forest-ttk-theme-master/forest-dark.tcl')
+        light_style_path = self.resource_path('../assests/Forest-ttk-theme-master/forest-light.tcl')
+        self.tk.call('source', dark_style_path)
+        self.tk.call('source', light_style_path)
+        ttk.Style().theme_use('forest-light')
         s = ttk.Style()
         self.protocol("WM_DELETE_WINDOW",self.close_window)
         s.configure('red.TFrame', background='red')#2B2B2B
@@ -74,20 +76,23 @@ class TungstenGui(tk.Tk):
 
         self.menu_bar = tk.Menu(self)
 
-        self.menu_settings = tk.Menu(self.menu_bar, tearoff=0)
+        self.menu_commands = tk.Menu(self.menu_bar, tearoff=0)
         self.menu_file = tk.Menu(self.menu_bar)
         self.menu_help = tk.Menu(self.menu_bar)
         
         #self.menu_bar.add_cascade(menu=self.menu_file, label='File')
-        self.menu_bar.add_cascade(menu=self.menu_settings, label='Settings')
+        self.menu_bar.add_command(label="Swap Theme",command=self.swap_theme)
+        self.menu_bar.add_cascade(menu=self.menu_commands, label='Commands')
         self.menu_bar.add_cascade(menu=self.menu_help, label='Help')
         
-        self.menu_settings.add_command(label="9HY",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","h","y"],)).start())
-        self.menu_settings.add_command(label="9IY",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","i","y"],)).start())
-        self.menu_settings.add_command(label="9JY",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","j","y"],)).start())
-        self.menu_settings.add_command(label="9KA",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","k","a"],)).start())
-        self.menu_settings.add_command(label="9KB",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","k","b"],)).start())
-        self.menu_settings.add_command(label="9L",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","l"],)).start())
+        self.menu_commands.add_command(label="9HY - Erase Config",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","h","y"],)).start())
+        self.menu_commands.add_command(label="9IY - Erase Reports",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","i","y"],)).start())
+        self.menu_commands.add_command(label="9JY - Erase DataStore",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","j","y"],)).start())
+        self.menu_commands.add_command(label="9KA - Erase Debugs(BlockStore)",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","k","a"],)).start())
+        self.menu_commands.add_command(label="9KB - Erase Debugs(Debugs)",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","k","b"],)).start())
+        self.menu_commands.add_command(label="9L - Immediate Reset",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","l"],)).start())
+        self.menu_commands.add_command(label="9Vy - Factory Reset",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","v","y"],)).start())
+        self.menu_commands.add_command(label="9dwbCtrl+a - Reset Bluetooth Name",command = lambda: threading.Thread(daemon=True,target=self.send_commands,args=(["esc","9","d","w","b",chr(1)],)).start())
 
         self.menu_help.add_command(label="Help",command=lambda: HelpMenu(self))
 
@@ -137,61 +142,68 @@ class TungstenGui(tk.Tk):
         # list box
         self.side_bar_listbox.grid(row=4,column=1,sticky="nw",padx=20, pady=(20, 0))
         # alternate line colors
-        try:
-            for i in range(0,len(self.comports),2):
-                self.side_bar_listbox.itemconfigure(i, background='#242424')
-        except Exception as e: print(f'LIST BOX EXCEPTION{e}')
+        # try:
+        #     for i in range(0,len(self.comports),2):
+        #         self.side_bar_listbox.itemconfigure(i)
+        # except Exception as e: print(f'LIST BOX EXCEPTION{e}')
 
         self.side_bar_selected_devices_frame.grid(row=5,column=1,sticky="new",padx=20, pady=(20, 0))
         self.side_bar_selected_devices_placeholder.pack(padx=20,pady=20)
 
 # Main
-
-    # check buttons
-        self.check_buttons = ttk.Frame()
-        self.check_buttons.pack(fill="both")
-
-        self.check_buttons.columnconfigure((1,2,3),weight=0)
-        self.check_buttons.rowconfigure((1),weight=1)
+    # file selection 
+        self.stage_options = ttk.Frame()
+        self.stage_options.pack(fill="both")
+        #create grid on frame
+        self.stage_options.columnconfigure((0,1,2),weight=0)
+        self.stage_options.rowconfigure((0,1,2,3),weight=0)        
 
         #check options values
-        self.check_push_pers = tk.IntVar()
+        self.check_push_cert = tk.IntVar()
         self.check_push_firm = tk.IntVar()
+        self.check_push_pers = tk.IntVar()
         self.check_push_BLE = tk.IntVar()
 
-        self.check_3=ttk.Checkbutton(self.check_buttons, text="Push Firmware",variable=self.check_push_firm).grid(row=1,column=1,padx=1,pady=1,sticky="w")
-        self.check_2=ttk.Checkbutton(self.check_buttons, text="Push Personality",variable=self.check_push_pers).grid(row=1,column=2,padx=1,pady=1,sticky="w")
-        self.check_4=ttk.Checkbutton(self.check_buttons, text="Push BLE",variable=self.check_push_BLE).grid(row=1,column=3,padx=1,pady=1,sticky="w")
-
-    # file selection 
-        self.file_selection = ttk.Frame()
-        self.file_selection.pack(fill="both")
-        #create grid on frame
-        self.file_selection.columnconfigure((1,2),weight=0)
-        self.file_selection.rowconfigure((1,2,3),weight=0)        
+        self.check_1=ttk.Checkbutton(self.stage_options, text="Push Cert",variable=self.check_push_cert)
+        self.check_2=ttk.Checkbutton(self.stage_options, text="Push Firmware",variable=self.check_push_firm)
+        self.check_3=ttk.Checkbutton(self.stage_options, text="Push Personality",variable=self.check_push_pers)
+        self.check_4=ttk.Checkbutton(self.stage_options, text="Push BLE",variable=self.check_push_BLE)
 
         #vars
+        self.cert_path = None
         self.firmware_path = None
         self.personality_path = None
         self.ble_path = None
+        self.cert_path_str = tk.StringVar(value=self.cert_path)
         self.firmware_path_str = tk.StringVar(value=self.firmware_path)
         self.personality_path_str = tk.StringVar(value=self.personality_path)
         self.ble_path_str = tk.StringVar(value=self.ble_path)
 
         #create widgets
-        self.select_firmware_btn  = ttk.Button(self.file_selection,text="Firmware",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("firm",)).start())
-        self.select_personality_btn  = ttk.Button(self.file_selection,text="Personality",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("pers",)).start())
-        self.select_ble_btn  = ttk.Button(self.file_selection,text="BLE",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("ble",)).start())
-        self.firmware_label = ttk.Label(self.file_selection,textvariable=self.firmware_path_str)
-        self.personality_label = ttk.Label(self.file_selection,textvariable=self.personality_path_str)
-        self.ble_label = ttk.Label(self.file_selection,textvariable=self.ble_path_str)
+        self.select_cert_btn  = ttk.Button(self.stage_options,text="Certificate",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("cert",)).start())
+        self.select_firmware_btn  = ttk.Button(self.stage_options,text="Firmware",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("firm",)).start())
+        self.select_personality_btn  = ttk.Button(self.stage_options,text="Personality",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("pers",)).start())
+        self.select_ble_btn  = ttk.Button(self.stage_options,text="BLE",command=lambda: threading.Thread(daemon=True,target=self.get_path,args=("ble",)).start())
+        self.cert_label = ttk.Label(self.stage_options,textvariable=self.cert_path_str)
+        self.firmware_label = ttk.Label(self.stage_options,textvariable=self.firmware_path_str)
+        self.personality_label = ttk.Label(self.stage_options,textvariable=self.personality_path_str)
+        self.ble_label = ttk.Label(self.stage_options,textvariable=self.ble_path_str)
 
         #place widgets
+        self.check_1.grid(row=0,column=0,padx=2,pady=2,sticky="w")
+        self.select_cert_btn.grid(row=0,column=1,padx=2,pady=2)
+        self.cert_label.grid(row=0,column=2,padx=2,pady=2,sticky="w")
+
+        self.check_2.grid(row=1,column=0,padx=2,pady=2,sticky="w")
         self.select_firmware_btn.grid(row=1,column=1,padx=2,pady=2)
-        self.select_personality_btn.grid(row=2,column=1,padx=2,pady=2)
-        self.select_ble_btn.grid(row=3,column=1,padx=2,pady=2)
         self.firmware_label.grid(row=1,column=2,padx=2,pady=2,sticky="w")
+        
+        self.check_3.grid(row=2,column=0,padx=2,pady=2,sticky="w") 
+        self.select_personality_btn.grid(row=2,column=1,padx=2,pady=2)
         self.personality_label.grid(row=2,column=2,padx=2,pady=2,sticky="w")
+        
+        self.check_4.grid(row=3,column=0,padx=2,pady=2,sticky="w")
+        self.select_ble_btn.grid(row=3,column=1,padx=2,pady=2)
         self.ble_label.grid(row=3,column=2,padx=2,pady=2,sticky="w")
     #display tabs
         self.tab_view = ttk.Notebook()
@@ -216,7 +228,7 @@ class TungstenGui(tk.Tk):
             label.pack(expand=True,fill="both")
             labels.append(label)
 
-        self.notebook_Handler = NotebookHandler(labels,self.devices)
+        self.notebook_Handler = DisplayHandler(labels,self.devices)
         self.notebook_Handler.start_handler()
 
     def run_btn_press(self):
@@ -231,9 +243,15 @@ class TungstenGui(tk.Tk):
         threading.Thread(daemon=True,target=self.update_footer_info_loop).start()
         #stager setup
         stager_thread = Stager(self.devices)
-        #tasks(pers , firm , BLE)
-        stager_thread.tasks  = [self.check_push_firm.get(),self.check_push_pers.get(),self.check_push_BLE.get()]
+        ''' Tasks
+        tasks[0] - Push Cert
+        tasks[1] - Push Firmware
+        tasks[2] - Push Personality
+        tasks[3] - Push BLE
+        '''
+        stager_thread.tasks  = [self.check_push_cert.get(),self.check_push_firm.get(),self.check_push_pers.get(),self.check_push_BLE.get()]
         stager_thread.progress_bar_object = self.progress_bar_object
+        stager_thread.cert_path = self.cert_path
         stager_thread.firmware_path = self.firmware_path
         stager_thread.personality_path = self.personality_path
         stager_thread.BLE_path = self.ble_path
@@ -243,6 +261,7 @@ class TungstenGui(tk.Tk):
         self.display_results(self.stager_results_frame,results,warplen=400,align="left")
         self.info_running = False
         self.side_bar_run_btn.configure(state="enable")
+        self.send_commands(["esc","f"]) # open Prod screen on all units when done
 
     def pb_setup(self):
         if not self.firmware_path and not self.personality_path and not self.ble_path:
@@ -361,6 +380,9 @@ class TungstenGui(tk.Tk):
     def get_path(self,type):
         path = fd.askopenfilename()
         head,tail = os.path.split(path)
+        if type == "cert":
+            self.cert_path = path
+            self.cert_path_str.set(tail)
         if type == "firm":
             self.firmware_path = path
             self.firmware_path_str.set(tail)
@@ -440,6 +462,13 @@ class TungstenGui(tk.Tk):
         self.devices.clear()
         self.destroy()
         logger.info(f'Safely closed')
+
+    def swap_theme(self):
+        current_theme = ttk.Style().theme_use()
+        if current_theme == 'forest-dark':
+            ttk.Style().theme_use('forest-light')
+        else:
+            ttk.Style().theme_use('forest-dark')
 
 if __name__ == "__main__":
     format = "%(asctime)s.%(msecs)04d - %(message)s"
