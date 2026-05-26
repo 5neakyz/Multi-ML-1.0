@@ -36,9 +36,7 @@ class TungstenGui(tk.Tk):
         self.option_add("*tearOff", False) # This is always a good idea
         icon_path = self.resource_path("../assests/mlunitblack.ico")
         self.iconbitmap(icon_path)
-        dark_style_path = self.resource_path('../assests/Forest-ttk-theme-master/forest-dark.tcl')
         light_style_path = self.resource_path('../assests/Forest-ttk-theme-master/forest-light.tcl')
-        self.tk.call('source', dark_style_path)
         self.tk.call('source', light_style_path)
         ttk.Style().theme_use('forest-light')
         s = ttk.Style()
