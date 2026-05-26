@@ -81,7 +81,6 @@ class TungstenGui(tk.Tk):
         self.menu_help = tk.Menu(self.menu_bar)
         
         #self.menu_bar.add_cascade(menu=self.menu_file, label='File')
-        self.menu_bar.add_command(label="Swap Theme",command=self.swap_theme)
         self.menu_bar.add_cascade(menu=self.menu_commands, label='Commands')
         self.menu_bar.add_cascade(menu=self.menu_help, label='Help')
         
@@ -206,13 +205,7 @@ class TungstenGui(tk.Tk):
         self.select_ble_btn.grid(row=3,column=1,padx=2,pady=2)
         self.ble_label.grid(row=3,column=2,padx=2,pady=2,sticky="w")
     #display tabs
-        self.tab_view = ttk.Notebook()
-        self.tab_view.pack(fill="both",expand=True,padx=5,pady=5)
-
-        self.new_pad = ttk.Frame(self.tab_view)
-
-        self.tab_view.add(self.new_pad,text="Tab 1")
-
+        self.create_notebook()
 
         self.mainloop()
 
@@ -369,7 +362,7 @@ class TungstenGui(tk.Tk):
                 color = '#217346'
             else:
                 color = '#b40d1b'
-            label = ttk.Label(parent_label,text=result[0],background=color,wraplength=warplen)
+            label = ttk.Label(parent_label,text=result[0],foreground="white",background=color,wraplength=warplen)
             label.pack(padx=5, pady=5,side=align)
 
     def clear_child_in_frame(self,*frames):
@@ -463,12 +456,14 @@ class TungstenGui(tk.Tk):
         self.destroy()
         logger.info(f'Safely closed')
 
-    def swap_theme(self):
-        current_theme = ttk.Style().theme_use()
-        if current_theme == 'forest-dark':
-            ttk.Style().theme_use('forest-light')
-        else:
-            ttk.Style().theme_use('forest-dark')
+
+    def create_notebook(self):
+        self.tab_view = ttk.Notebook()
+        self.tab_view.pack(fill="both",expand=True,padx=5,pady=5)
+
+        self.new_pad = ttk.Frame(self.tab_view)
+        self.tab_view.add(self.new_pad,text="Tab 1")
+
 
 if __name__ == "__main__":
     format = "%(asctime)s.%(msecs)04d - %(message)s"
