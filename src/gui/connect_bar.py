@@ -28,20 +28,30 @@ class ConnectBar(ctk.CTkFrame):
         self.pack(fill="x",side="bottom",padx=1,pady=1)
         #buttons and connected frame
 
-        self.run_btn  = ctk.CTkButton(self,state='disabled',text="Run",height=26,command=lambda: threading.Thread(daemon=True,target=self.place_holder_function_for_test).start())
+        self.run_btn  = ctk.CTkButton(self,state='disabled',text="Run",height=26,command=lambda: threading.Thread(daemon=True,target=self.run_btn_press).start())
         self.run_btn.pack(fill="x",side="right",padx=3,pady=1)
         self.connect_btn = ctk.CTkButton(self,height=26,textvariable=self.connect_btn_text_str,command=lambda: threading.Thread(daemon=True,target=self.connect_disconnect_btn).start())
         self.connect_btn.pack(fill="x",side="right",padx=10,pady=1)
-        self.connect_selection_frame = ctk.CTkFrame(self,fg_color="gray17")
+        self.connect_selection_frame = ctk.CTkFrame(self)
         self.selected_devices_label =ctk.CTkLabel(self,text="Selected:").pack(side="left",padx=10,pady=1)
         self.selected_devices_placeholder = ctk.CTkLabel(self.connect_selection_frame,textvariable=self.selected_comports_str).pack(side="left",padx=10,pady=1)
         self.connect_selection_frame.pack(fill="x",side="left",padx=3,pady=3)
 
     def place_holder_function_for_test(self):
-        print("you called?")
+        temp = self.parent.option_selection.get_tasks()
+        print(temp)
+        print(temp.values())
+        print(temp.keys())
+        print(temp.get("push_cert"))
+        if temp.get("push_firm"):
+            print("pushing firmware")
 
     def run_btn_press(self):
-        pass
+        temp = self.parent.option_selection.get_paths()
+        print(temp)
+        print(temp.values())
+        print(temp.keys())
+
 
     def connect_disconnect_btn(self):
         if self.connect_btn_text_str.get() == 'Connect':

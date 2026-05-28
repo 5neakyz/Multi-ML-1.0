@@ -11,10 +11,51 @@ import math
 logger = logging.getLogger(__name__)
 
 class FixedDeviceDisplay(ctk.CTkFrame):
-    def __init__(self, master):
-        super().__init__(master)
-        # vars
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
         self.master = master
+        self.pack(fill="both")
+        self.configure(border_width=1)
+        self.grid_columnconfigure((0,1),minsize=200,weight=1)
+        self.grid_rowconfigure(0,minsize=200,weight=1)
+
+
+    def populate_display_frame(self):
+        self.clear_child_in_frame(self)
+        if self.master.display_handler:
+            self.master.display_handler.interrupt()
+        text_boxes = []
+
+        for device in self.master.devices:
+            text_box = ctk.CTkTextbox(self,border_width=1,height=self.winfo_height()/2)
+            text_box._x_scrollbar.configure(height=1)
+            #text_box.pack(expand=True,fill="both")
+            text_boxes.append(text_box)
+
+        amount = math.ceil(len(self.master.devices) / 2)
+        #how many rows
+        rows = []
+        for x in range (amount):
+            rows.append(x)
+        self.grid_columnconfigure((0,1),minsize=200,weight=1)
+        self.grid_rowconfigure(rows,minsize=200,weight=1)
+        # auto populate grid with each device
+        x = 0
+        y = 0
+        for box in text_boxes:
+            box.grid(column=x,row=y,padx=1,pady=1,sticky="NESW")
+            y += 1
+            if y > 1:
+                y = 0
+                x += 1
+
+        self.master.display_handler = DisplayHandler(text_boxes,self.master.devices)
+        self.master.display_handler.start_handler()
+
+    def clear_child_in_frame(self,*frames):
+        for frame in frames:
+            for widgets in frame.winfo_children():
+                widgets.destroy()    
 
 
 class ScrollableDeviceDisplay(ctk.CTkScrollableFrame):

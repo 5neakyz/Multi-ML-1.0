@@ -34,9 +34,9 @@ class OptionSelection(ctk.CTkScrollableFrame):
         self.check_2=ctk.CTkCheckBox(self, text="Push Firmware",variable=self.check_push_firm)
         self.check_3=ctk.CTkCheckBox(self, text="Push Personality",variable=self.check_push_pers)
         self.check_4=ctk.CTkCheckBox(self, text="Push BLE",variable=self.check_push_BLE)
-        self.check_5=ctk.CTkCheckBox(self, text="reset_bluetooth",variable=self.reset_ble)
-        self.check_6=ctk.CTkCheckBox(self, text="clear logs 9HY",variable=self.clear_logs)
-        self.check_7=ctk.CTkCheckBox(self, text="clear logs 9IY",variable=self.clear_log1)
+        self.check_5=ctk.CTkCheckBox(self, text="reset_bluetooth",variable=self.reset_ble,state='disabled')
+        self.check_6=ctk.CTkCheckBox(self, text="clear logs 9HY",variable=self.clear_logs,state='disabled')
+        self.check_7=ctk.CTkCheckBox(self, text="clear logs 9IY",variable=self.clear_log1,state='disabled')
         #file paths vars
         self.cert_path = None
         self.firmware_path = None
@@ -106,6 +106,25 @@ class OptionSelection(ctk.CTkScrollableFrame):
         if type == "cert":
             self.cert_path = path
             self.cert_path_str.set(tail)
+
+    def get_tasks(self):
+        return {
+            "push_cert":self.check_push_cert.get(),
+            "push_firm":self.check_push_firm.get(),
+            "push_pers":self.check_push_pers.get(),
+            "push_BLE":self.check_push_BLE.get(),
+            "reset_ble":self.reset_ble.get(),
+            "clear_logs_9HY":self.clear_logs.get(),
+            "clear_logs_9IY":self.clear_log1.get()
+        };
+
+    def get_paths(self):
+        return {
+            "cert_path":self.cert_path,
+            "firmware_path":self.firmware_path,
+            "personality_path":self.personality_path,
+            "ble_path":self.ble_path
+        }
     
 if __name__ == "__main__":
     root = ctk.CTk()

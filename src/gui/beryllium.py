@@ -24,7 +24,7 @@ from gui.custom_menu_bar import CustomMenuBar
 from gui.footer import Footer
 from gui.option_selection import OptionSelection
 from gui.connect_bar import ConnectBar
-from gui.display_devices import ScrollableDeviceDisplay
+from gui.display_devices import ScrollableDeviceDisplay, FixedDeviceDisplay
 #247F4C
 
 from utils.custom_menu import Menu
@@ -35,7 +35,7 @@ class Beryllium(ctk.CTk):
     def __init__(self):
         super().__init__()
 # configure window
-        self.title("ML Multi Stager v2.0.0")
+        self.title("Multi-Stager-Alpha-v3.0.0")
         self.geometry(f"{800}x{600}")
 
         #self.bind('<KeyPress>', self.onKeyPress)
@@ -45,9 +45,9 @@ class Beryllium(ctk.CTk):
         self.option_add("*tearOff", False) # This is always a good idea
         icon_path = self.resource_path("../assests/mlunitblack.ico")
         self.iconbitmap(icon_path)
-        ctk.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
+        ctk.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
         ctk.set_default_color_theme(self.resource_path("../themes/lavender.json"))
-        self.configure(fg_color="gray17")
+        #self.configure(fg_color="gray17")
         self.protocol("WM_DELETE_WINDOW",self.close_window)
         ctk.set_widget_scaling(1)
 
@@ -78,11 +78,12 @@ class Beryllium(ctk.CTk):
         self.footer_bar = Footer(self)
         self.footer_bar.pack(fill="x",side="bottom")
 # Option Selection
-        self.option_selection = OptionSelection(self,height=120)
+        self.option_selection = OptionSelection(self,height=100)
         self.option_selection.pack()
 # Main display
-        # self.display_devices =ScrollableDeviceDisplay(self)
-        # self.display_devices.pack(expand=True,fill="both")
+        #self.display_devices =ScrollableDeviceDisplay(self)
+        self.display_devices =FixedDeviceDisplay(self)
+        self.display_devices.pack(expand=True,fill="both")
 
         self.mainloop()
 # funcs
@@ -135,6 +136,12 @@ class Beryllium(ctk.CTk):
         self.devices.clear()
         self.destroy()
         logger.info(f'Safely closed')
+
+    def swap_theme(self):
+        if ctk.get_appearance_mode() == "Dark":
+            ctk.set_appearance_mode("Light")
+        else:
+            ctk.set_appearance_mode("Dark")
 
 if __name__ == "__main__":
     format = "%(asctime)s.%(msecs)04d - %(message)s"

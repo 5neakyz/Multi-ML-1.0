@@ -15,6 +15,7 @@ class Menu:
         self._menu_bar = ctk.CTkFrame(self._root, cursor="hand2")
         self._menu_bar.pack(side="top", fill="x")
         self._menu_widgets: list[tk.Menubutton] = []
+        self._button_widgets: list[ctk.CTkButton] = []
         ctk.AppearanceModeTracker.add(self.set_appearance_mode)
 
     def menu_bar(self, text: str, **kwargs) -> tk.Menu:
@@ -27,8 +28,9 @@ class Menu:
         return menu.menu
     
     def add_button(self, text: str,command, **kwargs) -> ctk.CTkButton:
-        button = ctk.CTkButton(self._menu_bar,command=command,text=text,fg_color="transparent",width=50,height=20,text_color="white")
+        button = ctk.CTkButton(self._menu_bar,command=command,text=text,fg_color="transparent",width=50,height=20)
         button.pack(side="left")
+        self._button_widgets.append(button)
         return button
     
 
@@ -49,3 +51,5 @@ class Menu:
                 activeforeground=text_color,
             )
             menu.menu.configure(bg=theme, fg=text_color)
+        for button in self._button_widgets:
+            button.configure( text_color=text_color)
