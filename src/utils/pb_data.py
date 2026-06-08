@@ -4,23 +4,32 @@ import dataclasses
 @dataclasses.dataclass
 class Pb_data():
 
-    progress: int = 0
-    total: int = 0
-            
+    _progress: int = 0
+    _total: int = 0
+    
+    def get_total(self) -> int:
+        return self._total
+    
+    def set_total(self,total:int):
+        self._total = total
+
+    def get_progress(self) -> int:
+        return self._progress
+
     def add_to_progress(self, value:int) -> int:
-        self.progress += value
-        return self.progress
+        self._progress += value
+        return self._progress
     
     def current_progress(self) -> str: 
-        return f'{self.progress}/{self.total}'
+        return f'{self._progress}/{self._total}'
     
-    def perc_current_progress(self) -> str:
-        if self.progress > self.total:
+    def current_progress_as_percentage(self) -> str:
+        if self._progress > self._total or self._total == 0:
                 return f'100%'
-        perc = self.progress/self.total * 100
+        perc = self._progress/self._total * 100
         return f'{round(perc,1)}%'
     
     def reset_all(self):
-        self.progress: int = 0
-        self.total: int = 0
+        self._progress: int = 0
+        self._total: int = 0
     

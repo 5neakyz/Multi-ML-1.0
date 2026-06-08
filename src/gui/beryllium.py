@@ -86,6 +86,54 @@ class Beryllium(ctk.CTk):
         self.display_devices.pack(expand=True,fill="both")
 
         self.mainloop()
+
+# menu bar commands
+
+# connection bar commands
+
+    def set_selected_ports(self,ports):
+        self.selected_comports = ports
+        self.selected_comports_str.set(self.selected_comports)
+        self.connect_bar.set_selected_ports(self.selected_comports)
+
+    def clear_selected_ports(self):
+        self.selected_comports = []
+        self.selected_comports_str.set(self.selected_comports)
+        self.connect_bar.set_selected_ports(self.selected_comports)
+
+# option selection commands
+
+    def get_option_selection_tasks(self):
+            return self.option_selection.get_tasks()
+
+    def get_option_selection_path(self):
+            return self.option_selection.get_paths()
+
+    # main display commands
+
+    # footer commands
+    def start_footer_info_loop(self):
+        self.footer_bar.start_update_info_loop()
+
+    def interrupt_footer_info_loop(self):
+        self.footer_bar.interrupt_info_loop()
+
+    def set_progress_bar_total(self,total):
+        self.progress_bar_object.set_total(total)
+
+    def get_progress_bar_total(self):
+        return self.progress_bar_object.get_total()
+    
+    def get_progress_bar_progress(self):
+        '''returns string of current progress in format : {self.progress}/{self.total}'''
+        return self.progress_bar_object.current_progress()
+
+    def get_progress_bar_percentage(self):
+        return self.progress_bar_object.current_progress_as_percentage()
+    
+    def reset_progress_bar(self):
+        self.progress_bar_object.reset_all()
+
 # funcs
     def create_threadpool(self,function,items:list) ->list:
         results = []
@@ -123,6 +171,7 @@ class Beryllium(ctk.CTk):
     def send_commands(self,commands):
         for device in self.devices:
             device.write_commands(commands)
+
     # kill everything on close
     def close_window(self):
         for device in self.devices:
@@ -142,6 +191,7 @@ class Beryllium(ctk.CTk):
             ctk.set_appearance_mode("Light")
         else:
             ctk.set_appearance_mode("Dark")
+
 
 if __name__ == "__main__":
     format = "%(asctime)s.%(msecs)04d - %(message)s"

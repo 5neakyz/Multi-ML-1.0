@@ -9,9 +9,9 @@ import threading
 logger = logging.getLogger(__name__)
 
 class OptionSelection(ctk.CTkScrollableFrame):
-    def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
-        self.master = master
+    def __init__(self, parent, **kwargs):
+        super().__init__(parent, **kwargs)
+        self.parent = parent
         self.pack(fill="both")
         self.configure(border_width=1)
         # bug in custom tkinter that scroll bar is 200 by defualt
@@ -129,5 +129,5 @@ class OptionSelection(ctk.CTkScrollableFrame):
 if __name__ == "__main__":
     root = ctk.CTk()
     root.geometry(f"{500}x{200}")
-    OptionSelection(master=root)
+    OptionSelection(parent=root)
     root.mainloop()

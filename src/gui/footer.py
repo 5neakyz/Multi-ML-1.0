@@ -57,6 +57,7 @@ class Footer(ctk.CTkFrame):
 
 
     def start_update_info_loop(self):
+        print('starting footer info update loop')
         self.info_running = True
         self.info_interrupt = False
         threading.Thread(daemon=True,target=self._update_footer_info_loop,).start()

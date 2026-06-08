@@ -37,21 +37,18 @@ class ConnectBar(ctk.CTkFrame):
         self.selected_devices_placeholder = ctk.CTkLabel(self.connect_selection_frame,textvariable=self.selected_comports_str).pack(side="left",padx=10,pady=1)
         self.connect_selection_frame.pack(fill="x",side="left",padx=3,pady=3)
 
-    def place_holder_function_for_test(self):
-        temp = self.parent.option_selection.get_tasks()
-        print(temp)
-        print(temp.values())
-        print(temp.keys())
-        print(temp.get("push_cert"))
-        if temp.get("push_firm"):
-            print("pushing firmware")
 
     def run_btn_press(self):
-        temp = self.parent.option_selection.get_paths()
-        print(temp)
-        print(temp.values())
-        print(temp.keys())
-
+        self.run_btn.configure(state='disabled')
+        self.parent.footer_bar.start_update_info_loop()
+        stager = Stager(self.parent.devices,
+                        progress_bar_object=self.parent.progress_bar_object,
+                        tasks=self.parent.option_selection.get_tasks(),
+                        paths=self.parent.option_selection.get_paths())
+        results = stager.start()
+        self.parent.footer_bar.interrupt_info_loop()
+        #self.display_results(self.connect_selection_frame,results,align="right")
+        self.run_btn.configure(state='normal')
 
     def connect_disconnect_btn(self):
         if self.connect_btn_text_str.get() == 'Connect':
