@@ -35,16 +35,22 @@ class Stager():
 
         self.progress_bar_object = progress_bar_object
     
-    def _stage(self,device:object):
+    def _stage(self,device:object) -> dict:
         
         if not self._is_tasks():
-            return [device.serial_port_name,False,"no tasks selected"]
+            return {"device": device.serial_port_name,
+                    "result": False,
+                    "message": "no tasks selected"}
         
         if not self._is_paths():
-            return [device.serial_port_name,False,"no paths selected"]
+            return {"device": device.serial_port_name,
+                    "result": False,
+                    "message": "no paths selected"}
         
         if not self.progress_bar_object:
-            return [device.serial_port_name,False,"no progress bar selected"]
+            return {"device": device.serial_port_name,
+                    "result": False,
+                    "message": "no progress bar selected"}
 
         device.progress_bar_object = self.progress_bar_object   
         '''
@@ -54,36 +60,49 @@ class Stager():
         if self.tasks.get("push_cert"): # Push Cert
             logger.info(f"STAGER: Pushing Certificate")
             if not device.push(self.paths.get("cert_path")):
-                return [device.serial_port_name,False]
+                return {"device": device.serial_port_name,
+                        "result": False,
+                        "message": "failed to push certificate"}
 
         if self.tasks.get("push_firm") or self.tasks.get("push_pers"): # erase config
             logger.info(f"STAGER: Erasing Config")
             if not device.erase_config():
-                return [device.serial_port_name,False]
-            
-        if self.tasks.get("push_firm"): # Push Firmware
+                return {"device": device.serial_port_name,
+                        "result": False,
+                        "message": "failed to erase config"}
+
+        if self.tasks.get("push_firm"): # Push firmware
             logger.info(f"STAGER: Pushing Firmware")
             if not device.push(self.paths.get("firmware_path")):
-                return [device.serial_port_name,False]
+                return {"device": device.serial_port_name,
+                        "result": False,
+                        "message": "failed to push firmware"}
             
         if self.tasks.get("push_pers"): # Push personality
             logger.info(f"STAGER: Pushing Personality")
             if not device.push(self.paths.get("personality_path")):
-                return [device.serial_port_name,False]
-                  
+                return {"device": device.serial_port_name,
+                        "result": False,
+                        "message": "failed to push personality"}
+
         if self.tasks.get("push_BLE"): # Push BLE
             logger.info(f"STAGER: Pushing BLE")
             if not device.push(self.paths.get("BLE_path")):
-                return [device.serial_port_name,False]
+                return {"device": device.serial_port_name,
+                        "result": False,
+                        "message": "failed to push BLE"}
             
-        return [device.serial_port_name,True]
- 
+        return {"device": device.serial_port_name,
+                "result": True,
+                "message": "Success"}
+
     def start(self):
         results = []
         with concurrent.futures.ThreadPoolExecutor() as executor:# parallelism 
             tasks = [executor.submit(self._stage,device) for device in self.devices]
             for x in concurrent.futures.as_completed(tasks):
                 results.append(x.result())
+        print(results)
         return results
     
 

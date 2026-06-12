@@ -84,8 +84,8 @@ class Beryllium(ctk.CTk):
         #self.display_devices =ScrollableDeviceDisplay(self)
         self.display_devices =FixedDeviceDisplay(self)
         self.display_devices.pack(expand=True,fill="both")
-
         self.mainloop()
+
 
 # menu bar commands
 
@@ -109,10 +109,25 @@ class Beryllium(ctk.CTk):
     def get_option_selection_path(self):
             return self.option_selection.get_paths()
 
-    # main display commands
+# main display commands
 
-    # footer commands
+    def populate_display_frame(self):
+        self.display_devices.populate_display_frame()
+
+# footer commands
+    def give_footer_results(self,results):
+        self.footer_bar.display_results(results)
+
+    def clear_footer_results(self):
+        self.footer_bar.clear_results()
+
     def start_footer_info_loop(self):
+        self.reset_progress_bar()
+        file_size = 0
+        for file in self.get_option_selection_path().values():
+            if file:
+                file_size += os.stat(file).st_size
+        self.set_progress_bar_total(file_size * len(self.devices))
         self.footer_bar.start_update_info_loop()
 
     def interrupt_footer_info_loop(self):

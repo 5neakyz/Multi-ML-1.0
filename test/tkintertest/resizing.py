@@ -17,22 +17,30 @@ class simpleapp_tk(ctk.CTkFrame):
             label = ctk.CTkLabel(self,anchor="center",bg_color=colors[x])
             labels.append(label)
 
-        x = 0
-        y = 0
+        col = 0
+        row = 0
+        cols = []
+        rows = []
         for label in labels:
-            label.grid(column=x,row=y,padx=1,pady=1,sticky="NESW")
-            y += 1
-            if y > 2:
-                y = 0
-                x += 1
-            print(f'Y:{y} X:{x}')
-                
-        self.grid_columnconfigure(0,minsize=200,weight=1)
-        self.grid_columnconfigure(1,minsize=200,weight=1)
-        self.grid_columnconfigure(2,minsize=200,weight=1)
-        self.grid_rowconfigure(0,minsize=200,weight=1)
-        self.grid_rowconfigure(1,minsize=200,weight=1)
-        self.grid_rowconfigure(2,minsize=200,weight=1)
+            print(f'col:{col} row:{row}')
+            cols.append(col)
+            rows.append(row)
+            label.grid(column=col,row=row,padx=1,pady=1,sticky="NESW")
+            col += 1
+            if col > 1:
+                col = 0
+                row += 1
+
+        print(f'cols: {cols}')
+        print(f'rows: {rows}')
+        print(f'cols unique: {set(cols)}')
+        print(f'rows unique: {set(rows)}')
+        self.grid_columnconfigure(list(set(cols)),minsize=200,weight=1)
+        #self.grid_columnconfigure(1,minsize=200,weight=1)
+        #self.grid_columnconfigure(2,minsize=200,weight=1)
+        self.grid_rowconfigure(list(set(rows)),minsize=200,weight=1)
+        #self.grid_rowconfigure(1,minsize=200,weight=1)
+        #self.grid_rowconfigure(2,minsize=200,weight=1)
 
 
 if __name__ == "__main__":

@@ -40,13 +40,15 @@ class ConnectBar(ctk.CTkFrame):
 
     def run_btn_press(self):
         self.run_btn.configure(state='disabled')
-        self.parent.footer_bar.start_update_info_loop()
+        self.parent.clear_footer_results()
+        self.parent.start_footer_info_loop()
         stager = Stager(self.parent.devices,
                         progress_bar_object=self.parent.progress_bar_object,
-                        tasks=self.parent.option_selection.get_tasks(),
-                        paths=self.parent.option_selection.get_paths())
+                        tasks=self.parent.get_option_selection_tasks(),
+                        paths=self.parent.get_option_selection_path())
         results = stager.start()
-        self.parent.footer_bar.interrupt_info_loop()
+        self.parent.interrupt_footer_info_loop()
+        self.parent.give_footer_results(results)
         #self.display_results(self.connect_selection_frame,results,align="right")
         self.run_btn.configure(state='normal')
 
@@ -83,7 +85,7 @@ class ConnectBar(ctk.CTkFrame):
             self.run_btn.configure(state='normal')
         # re-enable connect button
         self.connect_btn.configure(state='normal')
-        self.master.display_devices.populate_display_frame()
+        self.parent.populate_display_frame()
 
     def disconnect_btn_press(self):
         self.clear_child_in_frame(self.connect_selection_frame)
@@ -114,7 +116,7 @@ class ConnectBar(ctk.CTkFrame):
                 color = '#b40d1b'
             frame = ctk.CTkFrame(parent_label,fg_color=color)
             frame.pack(padx=3, pady=3,side=align)
-            label = ctk.CTkLabel(frame,text=result[0],bg_color=color)
+            label = ctk.CTkLabel(frame,text_color='white',text=result[0],bg_color=color)
             label.pack(padx=5, pady=3,side=align)
 
 
