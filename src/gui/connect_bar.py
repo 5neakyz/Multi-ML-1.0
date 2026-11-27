@@ -15,10 +15,10 @@ from stager import Stager
 logger = logging.getLogger(__name__)
 
 class ConnectBar(ctk.CTkFrame):
-    def __init__(self, parent):
+    def __init__(self, parent, controller=None):
         super().__init__(parent)
         # vars
-        self.parent = parent
+        self.parent = controller if controller is not None else parent
         self.selected_comports = []
         self.selected_comports_str = ctk.StringVar(value=self.selected_comports) # string list
         self.connect_btn_text_str = ctk.StringVar(value='Connect')

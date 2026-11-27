@@ -11,12 +11,12 @@ import math
 logger = logging.getLogger(__name__)
 
 class FixedDeviceDisplay(ctk.CTkFrame):
-    def __init__(self, parent, **kwargs):
+    def __init__(self, parent, controller=None, **kwargs):
         '''
         This works best for 4 devices or less
         '''
         super().__init__(parent, **kwargs)
-        self.parent = parent
+        self.parent = controller if controller is not None else parent
         self.pack(fill="both")
         self.configure(border_width=1)
         self.grid_columnconfigure((0,1),minsize=200,weight=1)
@@ -62,9 +62,9 @@ class FixedDeviceDisplay(ctk.CTkFrame):
 
 
 class ScrollableDeviceDisplay(ctk.CTkScrollableFrame):
-    def __init__(self, parent, **kwargs):
+    def __init__(self, parent, controller=None, **kwargs):
         super().__init__(parent, **kwargs)
-        self.parent = parent
+        self.parent = controller if controller is not None else parent
         self.pack(fill="both")
         self.configure(border_width=1)
         # bug in custom tkinter that scroll bar is 200 by defualt

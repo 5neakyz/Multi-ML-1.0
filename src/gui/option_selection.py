@@ -9,9 +9,9 @@ import threading
 logger = logging.getLogger(__name__)
 
 class OptionSelection(ctk.CTkScrollableFrame):
-    def __init__(self, parent, **kwargs):
+    def __init__(self, parent, controller=None, **kwargs):
         super().__init__(parent, **kwargs)
-        self.parent = parent
+        self.parent = controller if controller is not None else parent
         self.pack(fill="both")
         self.configure(border_width=1)
         # bug in custom tkinter that scroll bar is 200 by defualt

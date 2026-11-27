@@ -1,0 +1,25 @@
+CONFIG
+
+HostIP              172.17.168.157
+HostPort            5432
+APN                 microlise.lte1.gdsp
+
+PersonalityVer      SG14_NO_CAN_MICROLISE_STOCK_Rev_1
+
+CAN1Mode            Off
+
+DistanceSource      3
+SpeedSource         1
+
+IgnitionOn          0 0
+IgnitionOff         0 0
+MovingAfterStopped  1.0 60 1.0
+Stopped             1.0 60 1.0
+WakeupMask          4
+
+################### Metrics ###################
+
+ExcessiveIdle       0.1 180 0.15
+ExcessiveSpeedD     96.56 10 1.0
+HarshBrake         -14.0 0 13.9
+HarshCorneringG     8.0 0.4 0.3

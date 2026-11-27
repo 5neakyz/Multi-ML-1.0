@@ -24,6 +24,7 @@ from gui.custom_menu_bar import CustomMenuBar
 from gui.footer import Footer
 from gui.option_selection import OptionSelection
 from gui.connect_bar import ConnectBar
+from gui.port_selection import PortSelection
 from gui.display_devices import ScrollableDeviceDisplay, FixedDeviceDisplay
 #247F4C
 
@@ -71,19 +72,28 @@ class Beryllium(ctk.CTk):
 
         self.menu_bar = CustomMenuBar(self)
         self.menu_bar.pack(side="top", fill="x")
-# Connect bar
-        self.connect_bar = ConnectBar(self)
-        self.connect_bar.pack(fill="x",side="top")
 # Footer Info Bar
         self.footer_bar = Footer(self)
         self.footer_bar.pack(fill="x",side="bottom")
-# Option Selection
-        self.option_selection = OptionSelection(self,height=100)
-        self.option_selection.pack()
-# Main display
-        #self.display_devices =ScrollableDeviceDisplay(self)
-        self.display_devices =FixedDeviceDisplay(self)
-        self.display_devices.pack(expand=True,fill="both")
+
+# Main application tabs
+        self.main_tabs = ctk.CTkTabview(self)
+        self.main_tabs.pack(expand=True, fill="both")
+        self.display_tab = self.main_tabs.add("Device Display")
+        self.connection_tab = self.main_tabs.add("Connection & Options")
+
+        self.connect_bar = ConnectBar(self.connection_tab, controller=self)
+        self.port_selection = PortSelection(self.connection_tab, controller=self)
+        self.port_selection.pack(fill="x", padx=1, pady=1)
+        self.option_selection = OptionSelection(
+            self.connection_tab,
+            controller=self,
+            height=100,
+        )
+        self.option_selection.pack(expand=True, fill="both")
+
+        self.display_devices = FixedDeviceDisplay(self.display_tab, controller=self)
+        self.display_devices.pack(expand=True, fill="both")
         self.mainloop()
 
 
